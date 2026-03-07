@@ -1,0 +1,26 @@
+{
+    "name": "com.ryanbliss.retree",
+    "version": "0.1.0",
+    "displayName": "Retree",
+    "description": "A reactive state tree library for Unity. Automatically detects field changes on your objects and propagates change events up the tree hierarchy.",
+    "unity": "6000.0",
+    "keywords": [
+        "reactive",
+        "state",
+        "tree",
+        "observable",
+        "change-detection"
+    ],
+    "author": {
+        "name": "Ryan Bliss",
+        "url": "https://github.com/ryanbliss"
+    },
+    "license": "MIT",
+    "samples": [
+        {
+            "displayName": "Todo App",
+            "description": "A simple todo list demonstrating RetreeNode, RetreeList, change listeners, and RetreeUpdater.",
+            "path": "Samples~/TodoApp"
+        }
+    ]
+}
