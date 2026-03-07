@@ -3,7 +3,7 @@
 
 using System.Collections;
 using NUnit.Framework;
-using Retree;
+using RetreeCore;
 using UnityEngine.TestTools;
 
 namespace SpaceInvaders.Tests
@@ -97,7 +97,7 @@ namespace SpaceInvaders.Tests
             var game = new Game();
             // Activate tree listening so parent tracking works
             game.RegisterOnTreeChanged(_ => { });
-            Retree.Retree.Tick();
+            Retree.Tick();
 
             var proj = new LaserProjectile(0f, 0f, 1f);
             game.projectiles.Add(proj);
@@ -111,7 +111,7 @@ namespace SpaceInvaders.Tests
             Assert.AreEqual(healthBefore - 10, enemy.health.health);
             Assert.AreEqual(0, game.projectiles.Count);
 
-            Retree.Retree.ClearListeners(game, recursive: true);
+            Retree.ClearListeners(game, recursive: true);
             yield return null;
         }
 
@@ -120,14 +120,14 @@ namespace SpaceInvaders.Tests
         {
             var game = new Game();
             game.RegisterOnTreeChanged(_ => { });
-            Retree.Retree.Tick(); // takes snapshot, sets parent for player
+            Retree.Tick(); // takes snapshot, sets parent for player
 
             game.player.Shoot();
 
             Assert.AreEqual(1, game.projectiles.Count);
             Assert.AreEqual(1f, game.projectiles[0].yDirection); // player fires upward
 
-            Retree.Retree.ClearListeners(game, recursive: true);
+            Retree.ClearListeners(game, recursive: true);
             yield return null;
         }
 
@@ -136,17 +136,17 @@ namespace SpaceInvaders.Tests
         {
             var game = new Game();
             game.RegisterOnTreeChanged(_ => { });
-            Retree.Retree.Tick();
+            Retree.Tick();
 
             var enemy = game.SpawnEnemy();
-            Retree.Retree.Tick(); // snapshot sees new enemy field
+            Retree.Tick(); // snapshot sees new enemy field
 
             enemy.Shoot();
 
             Assert.AreEqual(1, game.projectiles.Count);
             Assert.AreEqual(-1f, game.projectiles[0].yDirection); // enemy fires downward
 
-            Retree.Retree.ClearListeners(game, recursive: true);
+            Retree.ClearListeners(game, recursive: true);
             yield return null;
         }
 
@@ -199,14 +199,14 @@ namespace SpaceInvaders.Tests
                         treeChangedFired = true;
                 }
             });
-            Retree.Retree.Tick(); // initial snapshot
+            Retree.Tick(); // initial snapshot
 
             game.player.health.TakeDamage(10);
-            Retree.Retree.Tick(); // detect health change
+            Retree.Tick(); // detect health change
 
             Assert.IsTrue(treeChangedFired);
 
-            Retree.Retree.ClearListeners(game, recursive: true);
+            Retree.ClearListeners(game, recursive: true);
             yield return null;
         }
     }

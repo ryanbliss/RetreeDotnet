@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using Retree;
-using Retree.Unity;
+using RetreeCore;
+using RetreeCore.Unity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -86,7 +86,7 @@ namespace SpaceInvaders
             if (game != null)
             {
                 game.UnregisterOnTreeChanged(OnGameTreeChanged);
-                Retree.Retree.ClearListeners(game, recursive: true);
+                Retree.ClearListeners(game, recursive: true);
             }
         }
 
@@ -140,7 +140,7 @@ namespace SpaceInvaders
 
         private void HandleHealthChange(Health h)
         {
-            var parent = Retree.Retree.Parent(h);
+            var parent = Retree.Parent(h);
             if (parent is Player && !h.IsAlive)
             {
                 _shouldEndGame = true;

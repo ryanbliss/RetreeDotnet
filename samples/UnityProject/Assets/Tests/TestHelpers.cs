@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using NUnit.Framework;
+using RetreeCore;
 using UnityEngine;
 
 namespace SpaceInvaders.Tests
@@ -41,7 +42,7 @@ namespace SpaceInvaders.Tests
                 if (go != null)
                     UnityEngine.Object.Destroy(go);
             }
-            Retree.Retree.StopTicks();
+            Retree.StopTicks();
         }
     }
 }

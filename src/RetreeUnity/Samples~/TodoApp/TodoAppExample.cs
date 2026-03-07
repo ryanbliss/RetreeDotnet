@@ -1,10 +1,10 @@
 // Copyright (c) Ryan Bliss and contributors. All rights reserved.
 // Licensed under the MIT License.
 
-using Retree.Unity;
+using RetreeCore.Unity;
 using UnityEngine;
 
-namespace Retree.Samples.TodoApp
+namespace RetreeCore.Samples.TodoApp
 {
     /// <summary>
     /// Demonstrates Retree usage in Unity with a simple todo list.

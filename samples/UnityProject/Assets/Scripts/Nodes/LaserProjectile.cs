@@ -1,11 +1,11 @@
 // Copyright (c) Ryan Bliss and contributors. All rights reserved.
 // Licensed under the MIT License.
 
-using Retree;
+using RetreeCore;
 
 namespace SpaceInvaders
 {
-    public class LaserProjectile : RetreeNode, IHasYPos
+    public class LaserProjectile : RetreeNode
     {
         [RetreeIgnore]
         public int damage = 10;
@@ -17,9 +17,6 @@ namespace SpaceInvaders
 
         [RetreeIgnore]
         public readonly float yDirection;
-
-        // Explicit interface implementation delegates to the field
-        float IHasYPos.yPos => this.yPos;
 
         public LaserProjectile(float xPos, float startYPos, float yDirection)
         {
@@ -33,10 +30,10 @@ namespace SpaceInvaders
             yPos += yDirection * speed;
         }
 
-        public void OnCollision(IHasHealth hit)
+        public void OnCollision(Ship hit)
         {
             hit.health.TakeDamage(damage);
-            var parent = Retree.Retree.Parent(this);
+            var parent = Retree.Parent(this);
             if (parent is RetreeList<LaserProjectile> list)
             {
                 list.Remove(this);

@@ -17,9 +17,9 @@ Retree is a C# port of the TypeScript library [Retree](https://github.com/ryanbl
 
 ```
 RetreeDotnet/
-├── src/Retree/                    # Core library (netstandard2.1)
-├── tests/Retree.Tests/            # NUnit test suite (net9.0)
-└── benchmarks/Retree.Benchmarks/  # Performance benchmarks (net9.0)
+├── src/RetreeCore/                    # Core library (netstandard2.1)
+├── tests/RetreeCore.Tests/            # NUnit test suite (net9.0)
+└── benchmarks/RetreeCore.Benchmarks/  # Performance benchmarks (net9.0)
 ```
 
 ## Prerequisites
@@ -32,25 +32,25 @@ RetreeDotnet/
 Build the entire solution:
 
 ```bash
-dotnet build Retree.sln
+dotnet build RetreeCore.sln
 ```
 
 Build only the core library:
 
 ```bash
-dotnet build src/Retree/Retree.csproj
+dotnet build src/RetreeCore/RetreeCore.csproj
 ```
 
 ## Running Tests
 
 ```bash
-dotnet test tests/Retree.Tests/Retree.Tests.csproj
+dotnet test tests/RetreeCore.Tests/RetreeCore.Tests.csproj
 ```
 
 ## Running Benchmarks
 
 ```bash
-dotnet run --project benchmarks/Retree.Benchmarks/Retree.Benchmarks.csproj -c Release
+dotnet run --project benchmarks/RetreeCore.Benchmarks/RetreeCore.Benchmarks.csproj -c Release
 ```
 
 Available CLI options:
@@ -66,7 +66,7 @@ Available CLI options:
 Example:
 
 ```bash
-dotnet run --project benchmarks/Retree.Benchmarks/Retree.Benchmarks.csproj -c Release -- --size medium --ops low --iterations 50
+dotnet run --project benchmarks/RetreeCore.Benchmarks/RetreeCore.Benchmarks.csproj -c Release -- --size medium --ops low --iterations 50
 ```
 
 ## Quick Start
@@ -76,7 +76,7 @@ dotnet run --project benchmarks/Retree.Benchmarks/Retree.Benchmarks.csproj -c Re
 Extend `RetreeNode` and declare fields. Retree observes **instance fields** — not properties, not `readonly`, not `static`. Use `[RetreeIgnore]` to exclude a field.
 
 ```csharp
-using Retree;
+using RetreeCore;
 
 public class Todo : RetreeNode
 {

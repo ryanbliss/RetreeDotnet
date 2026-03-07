@@ -153,7 +153,7 @@ public interface IHasHealth
 
 ### 4. Retree node classes (pure C#, no Unity dependencies)
 
-All node classes live in `Assets/Scripts/Nodes/`. They use the `Retree` namespace only — no `UnityEngine` references.
+All node classes live in `Assets/Scripts/Nodes/`. They use the `RetreeCore` namespace only — no `UnityEngine` references.
 
 #### 4.1 `Health : RetreeNode`
 
@@ -443,7 +443,7 @@ Tests live in `Assets/Tests/` and use the Unity Test Framework (`com.unity.test-
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "Retree.dll"
+        "RetreeCore.dll"
     ],
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"

@@ -3,7 +3,7 @@
     "rootNamespace": "SpaceInvaders.Tests",
     "references": [
         "SpaceInvaders",
-        "Retree.Unity",
+        "RetreeCore.Unity",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
@@ -14,7 +14,7 @@
     "overrideReferences": true,
     "precompiledReferences": [
         "nunit.framework.dll",
-        "Retree.dll"
+        "RetreeCore.dll"
     ],
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"

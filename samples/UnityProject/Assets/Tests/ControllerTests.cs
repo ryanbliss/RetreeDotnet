@@ -3,7 +3,7 @@
 
 using System.Collections;
 using NUnit.Framework;
-using Retree;
+using RetreeCore;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -43,7 +43,7 @@ namespace SpaceInvaders.Tests
 
             gc.game.StartGame();
             // gameActive is a field change, needs a tick
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             Assert.IsTrue(gc.game.gameActive);
@@ -63,7 +63,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             // StartGame triggers first SpawnEnemy via OnGameActiveChanged
@@ -81,7 +81,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.player.Shoot();
@@ -101,7 +101,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.player.Shoot();
@@ -125,13 +125,13 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var enemy = gc.game.enemies[0];
             // Kill enemy by reducing health to 0
             enemy.health.TakeDamage(999);
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(3);
 
             // Enemy should be removed and GO destroyed
@@ -149,14 +149,14 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             Assert.AreEqual(0, gc.game.player.score);
 
             var enemy = gc.game.enemies[0];
             enemy.health.TakeDamage(999);
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(3);
 
             Assert.AreEqual(1, gc.game.player.score);
@@ -171,17 +171,17 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             Assert.IsTrue(gc.game.gameActive);
 
             gc.game.player.health.TakeDamage(999);
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(3);
 
             // Game end is deferred, needs another tick cycle
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(3);
 
             Assert.IsFalse(gc.game.gameActive);
@@ -196,11 +196,11 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.player.xPos = 3f;
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var playerGo = GameObject.Find("Player");
@@ -217,13 +217,13 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var enemy = gc.game.enemies[0];
             float testX = 2f;
             enemy.xPos = testX;
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var enemyGo = GameObject.Find("Enemy");
@@ -240,7 +240,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.player.Shoot();
@@ -249,7 +249,7 @@ namespace SpaceInvaders.Tests
             var proj = gc.game.projectiles[0];
             float testY = 2f;
             proj.yPos = testY;
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var projGo = GameObject.Find("Projectile");
@@ -266,7 +266,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var enemy = gc.game.enemies[0];
@@ -295,7 +295,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             int healthBefore = gc.game.player.health.health;
@@ -323,7 +323,7 @@ namespace SpaceInvaders.Tests
             yield return TestHelpers.WaitFrames(2);
 
             gc.game.StartGame();
-            Retree.Retree.Tick();
+            Retree.Tick();
             yield return TestHelpers.WaitFrames(2);
 
             var enemy = gc.game.enemies[0];
@@ -331,7 +331,7 @@ namespace SpaceInvaders.Tests
 
             // Place enemy at the right edge so MoveFormation detects it
             enemy.xPos = GameConstants.RightBound;
-            Retree.Retree.Tick();
+            Retree.Tick();
 
             // Wait for formation movement to detect the edge
             yield return TestHelpers.WaitFrames(3);

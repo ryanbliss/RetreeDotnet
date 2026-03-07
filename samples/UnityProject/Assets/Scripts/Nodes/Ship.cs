@@ -1,19 +1,15 @@
 // Copyright (c) Ryan Bliss and contributors. All rights reserved.
 // Licensed under the MIT License.
 
-using Retree;
+using RetreeCore;
 
 namespace SpaceInvaders
 {
-    public class Ship : RetreeNode, IHasYPos, IHasHealth
+    public class Ship : RetreeNode
     {
         public Health health;
         public float xPos;
         public float yPos;
-
-        // Explicit interface implementations delegate to the fields
-        float IHasYPos.yPos => this.yPos;
-        Health IHasHealth.health => this.health;
 
         public Ship(int startHealth, float xPos, float yPos)
         {
@@ -25,7 +21,7 @@ namespace SpaceInvaders
         public void Shoot()
         {
             // Walk up the parent chain to find the Game node
-            var current = Retree.Retree.Parent(this);
+            var current = Retree.Parent(this);
             while (current != null)
             {
                 if (current is Game game)
@@ -33,7 +29,7 @@ namespace SpaceInvaders
                     game.SpawnProjectile(this);
                     return;
                 }
-                current = Retree.Retree.Parent(current);
+                current = Retree.Parent(current);
             }
         }
     }

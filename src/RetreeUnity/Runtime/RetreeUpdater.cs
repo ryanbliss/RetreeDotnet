@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace Retree.Unity
+namespace RetreeCore.Unity
 {
     public class RetreeUpdater : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 // Copyright (c) Ryan Bliss and contributors. All rights reserved.
 // Licensed under the MIT License.
 
-namespace Retree.Samples.TodoApp
+namespace RetreeCore.Samples.TodoApp
 {
     public class Todo : RetreeNode
     {

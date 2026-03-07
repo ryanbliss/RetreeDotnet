@@ -1,9 +1,7 @@
 {
-    "name": "RetreeCore.Samples.TodoApp",
-    "rootNamespace": "RetreeCore.Samples.TodoApp",
-    "references": [
-        "RetreeCore.Unity"
-    ],
+    "name": "RetreeCore.Unity",
+    "rootNamespace": "RetreeCore.Unity",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

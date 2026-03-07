@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Retree.Samples.TodoApp
+namespace RetreeCore.Samples.TodoApp
 {
     public class TodoList : RetreeNode
     {

@@ -1,7 +1,7 @@
 // Copyright (c) Ryan Bliss and contributors. All rights reserved.
 // Licensed under the MIT License.
 
-using Retree;
+using RetreeCore;
 
 namespace SpaceInvaders
 {
@@ -22,11 +22,11 @@ namespace SpaceInvaders
             return enemy;
         }
 
-        public void SpawnProjectile(IHasYPos shooter)
+        public void SpawnProjectile(Ship shooter)
         {
             float direction = shooter.yPos < 0 ? 1f : -1f;
             var proj = new LaserProjectile(
-                shooter is Ship s ? s.xPos : 0f,
+                shooter.xPos,
                 shooter.yPos,
                 direction
             );

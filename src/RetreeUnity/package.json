@@ -1,7 +1,7 @@
 {
-    "name": "com.ryanbliss.retree",
+    "name": "com.ryanbliss.retreecore",
     "version": "0.1.0",
-    "displayName": "Retree",
+    "displayName": "RetreeCore",
     "description": "A reactive state tree library for Unity. Automatically detects field changes on your objects and propagates change events up the tree hierarchy.",
     "unity": "6000.0",
     "keywords": [
