@@ -11,13 +11,13 @@ Retree is a C# port of the TypeScript library [Retree](https://github.com/ryanbl
 - **Observable collections** — `RetreeList<T>` and `RetreeDictionary<TKey, TValue>` fire change events synchronously on mutation.
 - **Parent tracking** — Nodes automatically know their parent in the tree.
 - **Transactions** — Batch multiple mutations into a single event emission, or suppress events entirely with silent mode.
-- **Zero dependencies** — Targets `netstandard2.1` with no external packages. Works in Unity, server apps, or anywhere .NET runs.
+- **Zero dependencies** — Targets `netstandard2.0` with no external packages. Works in Unity, server apps, or anywhere .NET runs.
 
 ## Project Structure
 
 ```
 RetreeDotnet/
-├── src/RetreeCore/                    # Core library (netstandard2.1)
+├── src/RetreeCore/                    # Core library (netstandard2.0)
 ├── src/RetreeUnity/                   # Unity package (com.ryanbliss.retreecore)
 │   ├── Runtime/                       # RetreeUpdater + precompiled DLL
 ├── samples/SpaceInvaders/             # Reference Unity project (Space Invaders game)
@@ -63,7 +63,7 @@ Reference the `RetreeCore` project directly or build the DLL:
 dotnet build src/RetreeCore/RetreeCore.csproj -c Release
 ```
 
-The output DLL is at `src/RetreeCore/bin/Release/netstandard2.1/RetreeCore.dll`.
+The output DLL is at `src/RetreeCore/bin/Release/netstandard2.0/RetreeCore.dll`.
 
 ## Prerequisites
 

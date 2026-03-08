@@ -4,7 +4,57 @@ Benchmark results for RetreeCore change detection and event propagation.
 
 ## Latest Results
 
-**Date:** 2026-03-07
+**Date:** 2026-03-07 (netstandard2.0)
+**Runtime:** net9.0 | **Iterations:** 100 | **Warmup:** 5
+
+### Tick Duration (ms)
+
+| Scenario | Nodes | Ops | Min | Mean | Median | P95 | P99 | Max |
+|----------|-------|-----|------|------|--------|------|------|------|
+| Small/Low | 8 | 5 | 0.0021 | 0.0031 | 0.0028 | 0.0046 | 0.0055 | 0.0055 |
+| Small/Med | 8 | 13 | 0.0027 | 0.0029 | 0.0029 | 0.0032 | 0.0036 | 0.0037 |
+| Small/High | 8 | 50 | 0.0026 | 0.0029 | 0.0029 | 0.0032 | 0.0038 | 0.0039 |
+| Med/Low | 99 | 10 | 0.0037 | 0.0042 | 0.0041 | 0.0052 | 0.0060 | 0.0064 |
+| Med/Med | 99 | 45 | 0.0052 | 0.0058 | 0.0057 | 0.0065 | 0.0071 | 0.0079 |
+| Med/High | 99 | 180 | 0.0050 | 0.0053 | 0.0053 | 0.0060 | 0.0062 | 0.0063 |
+| Large/Low | 519 | 20 | 0.0058 | 0.0065 | 0.0063 | 0.0076 | 0.0112 | 0.0123 |
+| Large/Med | 519 | 100 | 0.0047 | 0.0051 | 0.0050 | 0.0059 | 0.0066 | 0.0069 |
+| Large/High | 519 | 650 | 0.0034 | 0.0037 | 0.0037 | 0.0039 | 0.0042 | 0.0047 |
+| XL/XHigh | 4834 | 10000 | 0.0087 | 0.0100 | 0.0097 | 0.0120 | 0.0127 | 0.0161 |
+
+### Total Scenario Time (ms) [mutations + tick + emission]
+
+| Scenario | Min | Mean | Median | P95 | P99 | Max |
+|----------|------|------|--------|------|------|------|
+| Small/Low | 0.0024 | 0.0036 | 0.0032 | 0.0057 | 0.0064 | 0.0065 |
+| Small/Med | 0.0067 | 0.0076 | 0.0073 | 0.0090 | 0.0115 | 0.0115 |
+| Small/High | 0.0106 | 0.0118 | 0.0114 | 0.0145 | 0.0157 | 0.0167 |
+| Med/Low | 0.0041 | 0.0048 | 0.0045 | 0.0059 | 0.0070 | 0.0075 |
+| Med/Med | 0.0099 | 0.0113 | 0.0110 | 0.0138 | 0.0158 | 0.0162 |
+| Med/High | 0.0255 | 0.0276 | 0.0270 | 0.0319 | 0.0330 | 0.0335 |
+| Large/Low | 0.0068 | 0.0077 | 0.0074 | 0.0093 | 0.0123 | 0.0140 |
+| Large/Med | 0.0174 | 0.0193 | 0.0187 | 0.0239 | 0.0250 | 0.0253 |
+| Large/High | 0.1014 | 0.1055 | 0.1041 | 0.1122 | 0.1174 | 0.1277 |
+| XL/XHigh | 0.6770 | 0.7999 | 0.8217 | 0.9171 | 0.9590 | 0.9770 |
+
+### Change Detection Summary
+
+| Scenario | Total Changes | Mean Depth | Mean/Tick |
+|----------|--------------|------------|-----------|
+| Small/Low | 400 | 0.75 | 4.0 |
+| Small/Med | 1000 | 0.90 | 10.0 |
+| Small/High | 1500 | 1.07 | 15.0 |
+| Med/Low | 700 | 1.14 | 7.0 |
+| Med/Med | 2000 | 1.40 | 20.0 |
+| Med/High | 3700 | 1.38 | 37.0 |
+| Large/Low | 1300 | 1.31 | 13.0 |
+| Large/Med | 2100 | 1.33 | 21.0 |
+| Large/High | 10200 | 0.99 | 102.0 |
+| XL/XHigh | 41400 | 1.02 | 414.0 |
+
+## Prior Results
+
+**Date:** 2026-03-07 (netstandard2.1)
 **Runtime:** net9.0 | **Iterations:** 100 | **Warmup:** 5
 
 ### Tick Duration (ms)
@@ -51,7 +101,3 @@ Benchmark results for RetreeCore change detection and event propagation.
 | Large/Med | 2100 | 1.33 | 21.0 |
 | Large/High | 10200 | 0.99 | 102.0 |
 | XL/XHigh | 41400 | 1.02 | 414.0 |
-
-## Prior Results
-
-_No prior results recorded._

@@ -15,5 +15,5 @@ If the `RetreeCore.dll` in the package is out of date, rebuild it from the repos
 
 ```bash
 dotnet build src/RetreeCore/RetreeCore.csproj -c Release
-cp src/RetreeCore/bin/Release/netstandard2.1/RetreeCore.dll src/RetreeUnity/Plugins/RetreeCore.dll
+cp src/RetreeCore/bin/Release/netstandard2.0/RetreeCore.dll src/RetreeUnity/Plugins/RetreeCore.dll
 ```
