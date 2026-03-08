@@ -18,6 +18,9 @@ Retree is a C# port of the TypeScript library [Retree](https://github.com/ryanbl
 ```
 RetreeDotnet/
 ├── src/RetreeCore/                    # Core library (netstandard2.1)
+├── src/RetreeUnity/                   # Unity package (com.ryanbliss.retreecore)
+│   ├── Runtime/                       # RetreeUpdater + precompiled DLL
+├── samples/SpaceInvaders/             # Reference Unity project (Space Invaders game)
 ├── tests/RetreeCore.Tests/            # NUnit test suite (net9.0)
 └── benchmarks/RetreeCore.Benchmarks/  # Performance benchmarks (net9.0)
 ```

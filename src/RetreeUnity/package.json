@@ -15,12 +15,5 @@
         "name": "Ryan Bliss",
         "url": "https://github.com/ryanbliss"
     },
-    "license": "MIT",
-    "samples": [
-        {
-            "displayName": "Todo App",
-            "description": "A simple todo list demonstrating RetreeNode, RetreeList, change listeners, and RetreeUpdater.",
-            "path": "Samples~/TodoApp"
-        }
-    ]
+    "license": "MIT"
 }

@@ -6,5 +6,5 @@
 
 - Initial release.
 - `RetreeUpdater` MonoBehaviour for main-thread ticking.
-- Precompiled `Retree.dll` (netstandard2.1) with core reactive state tree library.
-- Todo App sample demonstrating basic usage.
+- Precompiled `RetreeCore.dll` (netstandard2.1) with core reactive state tree library.
+- Space Invaders sample demonstrating RetreeNode, RetreeList, change listeners, and RetreeUpdater.

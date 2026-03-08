@@ -40,7 +40,7 @@ class Game : RetreeNode
     // Clear enemies and projectile
     public void End()
 
-    public void SpawnProjectile(IHasYPos hasYPos)
+    public void SpawnProjectile(Ship shooter)
 
 class Health : RetreeNode
     public int health
@@ -111,8 +111,8 @@ class Enemy : Ship
 ### 1. Project setup
 
 - **Unity version:** 6000.0.40f1
-- **Project location:** `samples/UnityProject/`
-- **Package reference:** `com.ryanbliss.retree` via local `file:` path in `Packages/manifest.json`
+- **Project location:** `samples/SpaceInvaders/`
+- **Package reference:** `com.ryanbliss.retreecore` via local `file:` path in `Packages/manifest.json`
 - **Render pipeline:** Built-in 2D. Orthographic camera sized so world coordinates span roughly ±8 horizontal, ±5 vertical.
 - **Scene:** `Assets/Scenes/SpaceInvaders.unity` — single scene, set as default in Build Settings.
 
@@ -132,30 +132,11 @@ All positions and movement use world-space floats. Constants are defined in a st
 
 ---
 
-### 3. Interfaces
-
-```csharp
-public interface IHasYPos
-{
-    float yPos { get; }
-}
-
-public interface IHasHealth
-{
-    Health health { get; }
-}
-```
-
-- `Ship` implements both `IHasYPos` and `IHasHealth`.
-- `LaserProjectile` implements `IHasYPos`.
-
----
-
-### 4. Retree node classes (pure C#, no Unity dependencies)
+### 3. Retree node classes (pure C#, no Unity dependencies)
 
 All node classes live in `Assets/Scripts/Nodes/`. They use the `RetreeCore` namespace only — no `UnityEngine` references.
 
-#### 4.1 `Health : RetreeNode`
+#### 3.1 `Health : RetreeNode`
 
 ```
 Fields:
@@ -175,7 +156,7 @@ Methods:
   public bool IsAlive => health > 0   (property, not observed)
 ```
 
-#### 4.2 `LaserProjectile : RetreeNode, IHasYPos`
+#### 3.2 `LaserProjectile : RetreeNode`
 
 ```
 Fields:
@@ -192,14 +173,14 @@ Methods:
     yPos += yDirection * speed
     Projectile does not self-remove; GameController handles off-screen cleanup.
 
-  public void OnCollision(IHasHealth hit):
+  public void OnCollision(Ship hit):
     hit.health.TakeDamage(damage)
     var parent = Retree.Parent(this);
     if (parent is RetreeList<LaserProjectile> list)
         list.Remove(this);
 ```
 
-#### 4.3 `Ship : RetreeNode, IHasYPos, IHasHealth`
+#### 3.3 `Ship : RetreeNode`
 
 ```
 Fields:
@@ -221,7 +202,7 @@ Methods:
     Direction = yPos < 0 ? 1f : -1f
 ```
 
-#### 4.4 `Player : Ship`
+#### 3.4 `Player : Ship`
 
 ```
 Fields:
@@ -243,7 +224,7 @@ Methods:
     score = 0
 ```
 
-#### 4.5 `Enemy : Ship`
+#### 3.5 `Enemy : Ship`
 
 ```
 Fields:
@@ -259,7 +240,7 @@ Methods:
   (relies on GameController for movement and shooting timers)
 ```
 
-#### 4.6 `Game : RetreeNode`
+#### 3.6 `Game : RetreeNode`
 
 ```
 Fields:
@@ -275,10 +256,10 @@ Methods:
     enemies.Add(enemy)
     return enemy
 
-  public void SpawnProjectile(IHasYPos shooter):
+  public void SpawnProjectile(Ship shooter):
     float direction = shooter.yPos < 0 ? 1f : -1f
     var proj = new LaserProjectile(
-        shooter is Ship s ? s.xPos : 0f,
+        shooter.xPos,
         shooter.yPos,
         direction
     )
@@ -297,11 +278,11 @@ Methods:
 
 ---
 
-### 5. MonoBehaviour controllers (Unity layer)
+### 4. MonoBehaviour controllers (Unity layer)
 
 All controllers live in `Assets/Scripts/Controllers/`. They bridge Retree nodes to Unity GameObjects.
 
-#### 5.1 `GameController : RetreeUpdater`
+#### 4.1 `GameController : RetreeUpdater`
 
 **Responsibilities:**
 - Owns the `Game` node instance.
@@ -354,7 +335,7 @@ Dictionary<RetreeBase, GameObject> _nodeToGameObject
 ```
 Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used for cleanup when nodes are removed from lists.
 
-#### 5.2 `PlayerController : MonoBehaviour`
+#### 4.2 `PlayerController : MonoBehaviour`
 
 - Created by `GameController` when game starts.
 - Holds a reference to the `Player` node.
@@ -365,7 +346,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 - Visual: blue quad (1×1 unit), created programmatically via `GameObject.CreatePrimitive(PrimitiveType.Quad)` with a blue material.
 - Has `BoxCollider2D` (trigger) + `Rigidbody2D` (kinematic) for collision detection.
 
-#### 5.3 `EnemyController : MonoBehaviour`
+#### 4.3 `EnemyController : MonoBehaviour`
 
 - Created by `GameController` when an enemy is spawned.
 - Holds a reference to the `Enemy` node.
@@ -374,7 +355,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 - Visual: red quad (1×1 unit) with a red material.
 - Has `BoxCollider2D` (trigger) + `Rigidbody2D` (kinematic) for collision detection.
 
-#### 5.4 `ProjectileController : MonoBehaviour`
+#### 4.4 `ProjectileController : MonoBehaviour`
 
 - Created by `GameController` when a projectile is spawned.
 - Holds a reference to the `LaserProjectile` node.
@@ -388,7 +369,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 
 ---
 
-### 6. Scene hierarchy
+### 5. Scene hierarchy
 
 ```
 SpaceInvaders (scene)
@@ -404,7 +385,7 @@ Player, Enemy, and Projectile GameObjects are instantiated at runtime by `GameCo
 
 ---
 
-### 7. Game flow
+### 6. Game flow
 
 1. **App starts:** `GameController.Start()` creates the `Game` node, registers listeners, and shows the start screen.
 2. **Player presses Space:** `game.StartGame()` sets `gameActive = true`. `OnGameTreeChanged` detects the change on next tick, hides start screen, spawns the player GameObject and first enemy.
@@ -421,11 +402,11 @@ Player, Enemy, and Projectile GameObjects are instantiated at runtime by `GameCo
 
 ---
 
-### 8. PlayMode tests
+### 7. PlayMode tests
 
 Tests live in `Assets/Tests/` and use the Unity Test Framework (`com.unity.test-framework`). All tests run in PlayMode so that MonoBehaviour lifecycle, physics triggers, and `Retree.Tick()` via `RetreeUpdater` work correctly.
 
-#### 8.1 Assembly definition
+#### 7.1 Assembly definition
 
 `Assets/Tests/SpaceInvaders.Tests.asmdef`:
 ```json
@@ -453,7 +434,7 @@ Tests live in `Assets/Tests/` and use the Unity Test Framework (`com.unity.test-
 }
 ```
 
-#### 8.2 Test helpers
+#### 7.2 Test helpers
 
 `TestHelpers.cs` — shared utilities for all tests:
 
@@ -473,7 +454,7 @@ static class TestHelpers:
   static void CleanupScene()
 ```
 
-#### 8.3 Node logic tests
+#### 7.3 Node logic tests
 
 `NodeTests.cs` — verifies pure Retree node behavior (no controllers needed, but runs in PlayMode so `Retree.Tick()` works via coroutine waits).
 
@@ -493,7 +474,7 @@ static class TestHelpers:
 | `Game_End_ResetsState` | Start game, add enemies/projectiles → `End()` → `gameActive == false`, lists empty, player reset |
 | `Game_TreeChanged_FiresOnHealthChange` | Register tree listener on game → damage player → tick → listener fires with health change |
 
-#### 8.4 Controller integration tests
+#### 7.4 Controller integration tests
 
 `ControllerTests.cs` — verifies MonoBehaviour controllers respond to Retree node changes and physics interactions work.
 
@@ -514,18 +495,18 @@ static class TestHelpers:
 | `Projectile_Collision_WithPlayer_DealsDamage` | Spawn downward projectile at player position → wait for physics trigger → player health reduced |
 | `FormationMovement_ReversesAtEdge` | Spawn enemies near right bound → update several frames → enemies should reverse and step down |
 
-#### 8.5 Running tests
+#### 7.5 Running tests
 
 Tests can be run from:
 - **Unity Editor:** Window → General → Test Runner → PlayMode tab → Run All
 - **Command line:**
   ```bash
-  Unity -runTests -testPlatform PlayMode -projectPath samples/UnityProject -batchmode -nographics -logFile -
+  Unity -runTests -testPlatform PlayMode -projectPath samples/SpaceInvaders -batchmode -nographics -logFile -
   ```
 
 ---
 
-### 9. File listing
+### 8. File listing
 
 ```
 Assets/
@@ -534,8 +515,6 @@ Assets/
 ├── Scripts/
 │   ├── Nodes/
 │   │   ├── GameConstants.cs
-│   │   ├── IHasYPos.cs
-│   │   ├── IHasHealth.cs
 │   │   ├── Health.cs
 │   │   ├── LaserProjectile.cs
 │   │   ├── Ship.cs
@@ -556,7 +535,7 @@ Assets/
 
 ---
 
-### 10. Key Retree patterns demonstrated
+### 9. Key Retree patterns demonstrated
 
 | Pattern | Where |
 |---------|-------|
