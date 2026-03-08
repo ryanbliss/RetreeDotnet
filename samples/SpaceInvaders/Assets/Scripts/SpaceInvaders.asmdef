@@ -1,0 +1,19 @@
+{
+    "name": "SpaceInvaders",
+    "rootNamespace": "SpaceInvaders",
+    "references": [
+        "RetreeCore.Unity",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "RetreeCore.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
