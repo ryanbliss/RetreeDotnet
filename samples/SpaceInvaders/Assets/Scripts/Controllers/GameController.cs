@@ -6,7 +6,6 @@ using RetreeCore;
 using RetreeCore.Unity;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 
 namespace SpaceInvaders
 {
@@ -14,10 +13,8 @@ namespace SpaceInvaders
     {
         public Game game;
 
-        // UI references
-        private Text _startText;
-        private Text _scoreText;
-        private Text _healthText;
+        // UI controller (lives on the Canvas)
+        private GameUIController _ui;
 
         // Node-to-GameObject tracking
         private Dictionary<RetreeBase, GameObject> _nodeToGameObject =
@@ -55,8 +52,8 @@ namespace SpaceInvaders
             game = new Game();
             game.RegisterOnTreeChanged(OnGameTreeChanged);
 
-            FindUIElements();
-            ShowStartScreen();
+            _ui = FindFirstObjectByType<GameUIController>();
+            _ui?.ShowStartScreen();
         }
 
         protected override void Update()
@@ -111,7 +108,7 @@ namespace SpaceInvaders
                 }
                 else if (change.FieldName == "score")
                 {
-                    UpdateScoreUI();
+                    _ui?.UpdateScore(game.player.score);
                 }
             }
         }
@@ -150,7 +147,7 @@ namespace SpaceInvaders
                 if (!_deadEnemies.Contains(enemy))
                     _deadEnemies.Add(enemy);
             }
-            UpdateHealthUI();
+            _ui?.UpdateHealth(game.player.health.health);
         }
 
         private void ProcessDeferredActions()
@@ -177,14 +174,16 @@ namespace SpaceInvaders
         {
             if (game.gameActive)
             {
-                HideStartScreen();
+                _ui?.HideStartScreen();
+                _ui?.UpdateScore(game.player.score);
+                _ui?.UpdateHealth(game.player.health.health);
                 CreatePlayerGameObject();
                 game.SpawnEnemy();
                 _enemySpawnTimer = 0f;
             }
             else
             {
-                ShowStartScreen();
+                _ui?.ShowStartScreen();
             }
         }
 
@@ -362,52 +361,5 @@ namespace SpaceInvaders
             }
         }
 
-        // ---- UI ----
-
-        private void FindUIElements()
-        {
-            var startGo = GameObject.Find("StartText");
-            if (startGo != null) _startText = startGo.GetComponent<Text>();
-
-            var scoreGo = GameObject.Find("ScoreText");
-            if (scoreGo != null) _scoreText = scoreGo.GetComponent<Text>();
-
-            var healthGo = GameObject.Find("HealthText");
-            if (healthGo != null) _healthText = healthGo.GetComponent<Text>();
-        }
-
-        private void ShowStartScreen()
-        {
-            if (_startText != null) _startText.gameObject.SetActive(true);
-            if (_scoreText != null) _scoreText.gameObject.SetActive(false);
-            if (_healthText != null) _healthText.gameObject.SetActive(false);
-        }
-
-        private void HideStartScreen()
-        {
-            if (_startText != null) _startText.gameObject.SetActive(false);
-            if (_scoreText != null)
-            {
-                _scoreText.gameObject.SetActive(true);
-                UpdateScoreUI();
-            }
-            if (_healthText != null)
-            {
-                _healthText.gameObject.SetActive(true);
-                UpdateHealthUI();
-            }
-        }
-
-        private void UpdateScoreUI()
-        {
-            if (_scoreText != null)
-                _scoreText.text = $"Score: {game.player.score}";
-        }
-
-        private void UpdateHealthUI()
-        {
-            if (_healthText != null)
-                _healthText.text = $"HP: {game.player.health.health}";
-        }
     }
 }

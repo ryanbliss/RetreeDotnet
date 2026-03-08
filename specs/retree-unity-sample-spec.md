@@ -14,13 +14,14 @@ class GameController : RetreeUpdater
     // Update game UI for active vs. inactive
     protected void OnGameNodeChanged()
 
-    // Shows "press space to start game"
-    protected void ShowStartScreen()
-
-    // Hides
-    protected void HideStartScreen()
-
     // anything else needed to fulfill below requirements
+
+class GameUIController : MonoBehaviour
+    // On Canvas. Manages start/end screen UI, score, and health text.
+    void ShowStartScreen()
+    void HideStartScreen()
+    void UpdateScore(int score)
+    void UpdateHealth(int health)
 
 class Game : RetreeNode
     public RetreeList<Enemy> enemies = new()
@@ -286,7 +287,7 @@ All controllers live in `Assets/Scripts/Controllers/`. They bridge Retree nodes 
 
 **Responsibilities:**
 - Owns the `Game` node instance.
-- Manages start/end screen UI.
+- Delegates UI updates to `GameUIController`.
 - Spawns an enemy every 10 seconds (max 5 alive at once).
 - Moves the enemy formation side-to-side: when any enemy hits a screen edge, all reverse direction and step down by 0.5 units.
 - Moves all projectiles each frame.
@@ -300,10 +301,7 @@ All controllers live in `Assets/Scripts/Controllers/`. They bridge Retree nodes 
 **Listener:**
 - `game.RegisterOnTreeChanged(OnGameTreeChanged)` — single listener for all changes: `gameActive` toggle, health changes, enemy/projectile list mutations, score updates.
 
-**UI elements (world-space or screen-space Canvas):**
-- "Press SPACE to Start" text — shown when `gameActive == false`.
-- Score text (top-left corner) — shows `Score: {player.score}`.
-- Health text (top-right corner) — shows `HP: {player.health.health}`.
+**UI:** Delegates to `GameUIController` (see §4.5) for start screen, score, and health display.
 
 **Formation movement logic (in `Update`):**
 ```
@@ -367,6 +365,16 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
   - If other has `PlayerController` → `projectile.OnCollision(playerController.Player)` (only if projectile direction is downward).
   - If other has `EnemyController` → `projectile.OnCollision(enemyController.Enemy)` (only if projectile direction is upward).
 
+#### 4.5 `GameUIController : MonoBehaviour`
+
+- Lives on the Canvas GameObject.
+- Finds `StartText`, `ScoreText`, and `HealthText` child Text components via `GameObject.Find()` in `Awake()`.
+- Public methods called by `GameController`:
+  - `ShowStartScreen()` — activates StartText, hides ScoreText and HealthText.
+  - `HideStartScreen()` — hides StartText, activates ScoreText and HealthText.
+  - `UpdateScore(int score)` — sets ScoreText to `"Score: {score}"`.
+  - `UpdateHealth(int health)` — sets HealthText to `"HP: {health}"`.
+
 ---
 
 ### 5. Scene hierarchy
@@ -375,7 +383,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 SpaceInvaders (scene)
 ├── Main Camera          — Orthographic, size=5, position=(0,0,-10)
 ├── GameController       — Has GameController component
-└── Canvas (Screen Space - Overlay)
+└── Canvas (Screen Space - Overlay) — Has GameUIController component
     ├── StartText        — "Press SPACE to Start", centered, large font
     ├── ScoreText        — Top-left, "Score: 0"
     └── HealthText       — Top-right, "HP: 100"
@@ -523,6 +531,7 @@ Assets/
 │   │   └── Game.cs
 │   └── Controllers/
 │       ├── GameController.cs
+│       ├── GameUIController.cs
 │       ├── PlayerController.cs
 │       ├── EnemyController.cs
 │       └── ProjectileController.cs

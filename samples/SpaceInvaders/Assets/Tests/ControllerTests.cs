@@ -359,6 +359,9 @@ namespace SpaceInvaders.Tests
             var healthGo = new GameObject("HealthText");
             healthGo.transform.SetParent(canvas.transform);
             healthGo.AddComponent<UnityEngine.UI.Text>();
+
+            // Added last so Awake() can find the Text objects above
+            canvas.AddComponent<GameUIController>();
         }
     }
 }
