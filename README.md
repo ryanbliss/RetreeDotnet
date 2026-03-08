@@ -25,6 +25,46 @@ RetreeDotnet/
 └── benchmarks/RetreeCore.Benchmarks/  # Performance benchmarks (net9.0)
 ```
 
+## Installation
+
+### Unity (via Package Manager)
+
+Requires **Unity 6000.0+**.
+
+Open **Window → Package Manager → + → Add package from git URL** and enter:
+
+```
+https://github.com/ryanbliss/RetreeDotnet.git?path=src/RetreeUnity
+```
+
+This installs the `com.ryanbliss.retreecore` package, which includes the precompiled `RetreeCore.dll` and the `RetreeUpdater` MonoBehaviour for main-thread ticking. No additional dependencies are required.
+
+To pin a specific version, append `#<tag-or-commit>`:
+
+```
+https://github.com/ryanbliss/RetreeDotnet.git?path=src/RetreeUnity#v0.1.0
+```
+
+Or add it directly to your `Packages/manifest.json`:
+
+```json
+{
+  "dependencies": {
+    "com.ryanbliss.retreecore": "https://github.com/ryanbliss/RetreeDotnet.git?path=src/RetreeUnity"
+  }
+}
+```
+
+### .NET (non-Unity)
+
+Reference the `RetreeCore` project directly or build the DLL:
+
+```bash
+dotnet build src/RetreeCore/RetreeCore.csproj -c Release
+```
+
+The output DLL is at `src/RetreeCore/bin/Release/netstandard2.1/RetreeCore.dll`.
+
 ## Prerequisites
 
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (for tests and benchmarks)
