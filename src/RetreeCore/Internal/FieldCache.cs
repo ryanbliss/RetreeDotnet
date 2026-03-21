@@ -66,19 +66,11 @@ namespace RetreeCore.Internal
             if (typeof(RetreeNode).IsAssignableFrom(fieldType))
                 return FieldKind.RetreeNode;
 
-            if (IsRetreeCollection(fieldType))
+            // Catches RetreeList<>, RetreeDictionary<,>, and any subclasses (e.g. SerializedRetreeDictionary<,>)
+            if (typeof(RetreeBase).IsAssignableFrom(fieldType))
                 return FieldKind.RetreeCollection;
 
             return FieldKind.Value;
-        }
-
-        private static bool IsRetreeCollection(Type type)
-        {
-            if (!type.IsGenericType)
-                return false;
-
-            var genericDef = type.GetGenericTypeDefinition();
-            return genericDef == typeof(RetreeList<>) || genericDef == typeof(RetreeDictionary<,>);
         }
 
         private static Func<object, object> CompileGetter(Type ownerType, FieldInfo field)
