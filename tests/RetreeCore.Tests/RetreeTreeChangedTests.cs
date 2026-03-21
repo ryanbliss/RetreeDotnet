@@ -264,6 +264,70 @@ namespace RetreeCore.Tests
         }
 
         [Test]
+        public void TreeChanged_OnDict_DeepChild_FiresExactlyOnce()
+        {
+            // Regression: dict → item (NodeWithChild) → item.child (SimpleNode) → child.count
+            // Should fire exactly once per change, not twice.
+            var dict = new RetreeDictionary<string, NodeWithChild>();
+            var item = new NodeWithChild();
+            var child = new SimpleNode { count = 0 };
+            item.child = child;
+            dict.Add("k", item);
+
+            int callCount = 0;
+            dict.OnTreeChanged(_ => callCount++);
+
+            child.count = 99;
+            Retree.Tick();
+
+            Assert.AreEqual(1, callCount, "OnTreeChanged should fire exactly once for a single deep change");
+        }
+
+        [Test]
+        public void TreeChanged_OnList_DeepChild_FiresExactlyOnce()
+        {
+            // Regression: list → item (NodeWithChild) → item.child (SimpleNode) → child.count
+            // Should fire exactly once per change, not twice.
+            var list = new RetreeList<NodeWithChild>();
+            var item = new NodeWithChild();
+            var child = new SimpleNode { count = 0 };
+            item.child = child;
+            list.Add(item);
+
+            int callCount = 0;
+            list.OnTreeChanged(_ => callCount++);
+
+            child.count = 42;
+            Retree.Tick();
+
+            Assert.AreEqual(1, callCount, "OnTreeChanged should fire exactly once for a single deep change");
+        }
+
+        [Test]
+        public void TreeChanged_OnDict_DeepChild_FiresExactlyOnce_WithBothParentAndDictListeners()
+        {
+            // Simulate: NodeWithDict (RetreeNode) → dict (RetreeDictionary) → value (NodeWithChild) → child (SimpleNode)
+            // Both parent and dict have an OnTreeChanged listener — but the user's listener on the dict
+            // should still fire exactly once.
+            var parent = new NodeWithDeepDict();
+            var item = new NodeWithChild();
+            var child = new SimpleNode { count = 0 };
+            item.child = child;
+            parent.Entries["k"] = item;
+
+            int dictCallCount = 0;
+            int parentCallCount = 0;
+            parent.Entries.OnTreeChanged(_ => dictCallCount++);
+            parent.OnTreeChanged(_ => parentCallCount++);
+
+            child.count = 99;
+            Retree.Tick();
+
+            Assert.AreEqual(1, dictCallCount, "dict OnTreeChanged should fire exactly once");
+            Assert.AreEqual(1, parentCallCount, "parent OnTreeChanged should fire exactly once");
+        }
+
+        [Test]
         public void UnregisterTreeChanged_StopsPropagation()
         {
             var parent = new NodeWithChild();

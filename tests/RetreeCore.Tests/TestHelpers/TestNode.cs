@@ -28,6 +28,12 @@ namespace RetreeCore.Tests.TestHelpers
         public RetreeDictionary<string, SimpleNode> Entries => _entries;
     }
 
+    public class NodeWithDeepDict : RetreeNode
+    {
+        private RetreeDictionary<string, NodeWithChild> _entries = new RetreeDictionary<string, NodeWithChild>();
+        public RetreeDictionary<string, NodeWithChild> Entries => _entries;
+    }
+
     public class NodeWithIgnored : RetreeNode
     {
         public int tracked = 0;

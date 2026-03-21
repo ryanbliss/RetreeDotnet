@@ -113,7 +113,6 @@ namespace RetreeCore.Tests
             Retree.RunSilent(() =>
             {
                 node.count = 99;
-                Retree.Tick();
             });
 
             Assert.AreEqual(0, nodeCallCount, "NodeChanged should not fire during silent");
@@ -130,12 +129,12 @@ namespace RetreeCore.Tests
             Retree.RunSilent(() =>
             {
                 node.count = 50;
-                Retree.Tick();
             });
 
             Assert.AreEqual(0, callCount, "No events during silent");
 
-            // Next tick should NOT detect the change because snapshot was updated
+            // Next tick should NOT detect the change because RunSilent internally ticked
+            // to absorb the snapshot before releasing silent mode.
             Retree.Tick();
             Assert.AreEqual(0, callCount, "Should not re-detect silently applied changes");
         }
@@ -155,6 +154,68 @@ namespace RetreeCore.Tests
 
             Assert.AreEqual(0, callCount, "No events during silent");
             Assert.AreEqual(2, list.Count, "Mutations should still be applied");
+        }
+
+        [Test]
+        public void RunSilent_Dict_AddValue_SuppressesTreeChanged()
+        {
+            // RunSilent suppresses synchronous EmitNodeChanged calls (e.g. dict.Add),
+            // which prevents tree change propagation to any listener on the dict.
+            var dict = new RetreeDictionary<string, NodeWithChild>();
+            int callCount = 0;
+            dict.OnTreeChanged(_ => callCount++);
+
+            Retree.RunSilent(() =>
+            {
+                dict.Add("k", new NodeWithChild());
+            });
+
+            Assert.AreEqual(0, callCount, "OnTreeChanged on dict should not fire when item added during RunSilent");
+        }
+
+        [Test]
+        public void RunSilent_ParentNode_WithDictChild_AddValue_SuppressesTreeChanged()
+        {
+            // Same as above but the listener is on the parent RetreeNode that owns the dict.
+            var parent = new NodeWithDeepDict();
+            int dictCallCount = 0;
+            int parentCallCount = 0;
+            parent.Entries.OnTreeChanged(_ => dictCallCount++);
+            parent.OnTreeChanged(_ => parentCallCount++);
+
+            Retree.RunSilent(() =>
+            {
+                parent.Entries["k"] = new NodeWithChild();
+            });
+
+            Assert.AreEqual(0, dictCallCount, "dict OnTreeChanged should not fire during RunSilent");
+            Assert.AreEqual(0, parentCallCount, "parent OnTreeChanged should not fire during RunSilent");
+        }
+
+        [Test]
+        public void RunSilent_Dict_DeepChildFieldChange_SuppressedAndNotRedetected()
+        {
+            // RunSilent internally ticks before and after the action, so field changes
+            // made inside — including deep nested ones — are absorbed into snapshots silently.
+            // The next external Tick() should not re-detect them.
+            var dict = new RetreeDictionary<string, NodeWithChild>();
+            var item = new NodeWithChild();
+            var child = new SimpleNode { count = 0 };
+            item.child = child;
+            dict.Add("k", item);
+
+            int callCount = 0;
+            dict.OnTreeChanged(_ => callCount++);
+
+            Retree.RunSilent(() =>
+            {
+                child.count = 99;
+            });
+
+            Assert.AreEqual(0, callCount, "OnTreeChanged should not fire during RunSilent");
+
+            Retree.Tick(); // post-tick inside RunSilent already updated the snapshot
+            Assert.AreEqual(0, callCount, "Should not re-detect silently applied deep changes");
         }
 
         #endregion

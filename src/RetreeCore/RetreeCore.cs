@@ -81,10 +81,15 @@ namespace RetreeCore
         public static void RunSilent(Action action)
         {
             var wasSilent = _isSilent;
+            // Pre-tick: flush any pending changes normally so they fire before silent mode begins.
+            Tick();
             _isSilent = true;
             try
             {
                 action();
+                // Post-tick: absorb mutations made inside the action into snapshots silently
+                // so they are not re-detected on the next external tick.
+                Tick();
             }
             finally
             {
@@ -98,7 +103,7 @@ namespace RetreeCore
             var nodes = new List<RetreeNode>(RetreeRegistry.ActiveNodes);
             foreach (var node in nodes)
             {
-                node.ClearAllListeners();
+                ClearListeners(node, true);
             }
         }
 
