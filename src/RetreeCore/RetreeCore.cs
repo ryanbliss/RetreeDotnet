@@ -130,7 +130,7 @@ namespace RetreeCore
             _transactionQueue?.QueueTreeChange(listenerNode, sourceNode, changes);
         }
 
-        internal static void Reset()
+        public static void Reset()
         {
             StopTicks();
             _transactionDepth = 0;

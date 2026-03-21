@@ -14,6 +14,9 @@ namespace RetreeCore.Unity
             Retree.Tick();
         }
 
-        protected virtual void OnDestroy() { }
+        protected virtual void OnDestroy()
+        {
+            Reset();
+        }
     }
 }

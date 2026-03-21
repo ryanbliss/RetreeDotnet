@@ -4,4 +4,15 @@
     <RootNamespace>RetreeCore</RootNamespace>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
+
+  <Target Name="CopyToUnityPlugins" AfterTargets="Build">
+    <PropertyGroup>
+      <UnityPluginsDir>$(MSBuildThisFileDirectory)../../src/RetreeUnity/Plugins</UnityPluginsDir>
+    </PropertyGroup>
+    <Copy
+      SourceFiles="$(OutputPath)$(AssemblyName).dll"
+      DestinationFolder="$(UnityPluginsDir)"
+      SkipUnchangedFiles="true" />
+    <Message Text="Copied $(AssemblyName).dll → $(UnityPluginsDir)" Importance="high" />
+  </Target>
 </Project>
