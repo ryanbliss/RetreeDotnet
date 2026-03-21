@@ -218,6 +218,40 @@ namespace RetreeCore
         }
 
         /// <summary>
+        /// Enables deep (tree) tracking on this node without adding an external tree listener.
+        /// Used by RetreeList and RetreeDictionary to recursively track items' child nodes.
+        /// Sets _isListeningToTree = true and calls SubscribeToChildren(), but does NOT
+        /// increment _treeListenerCount, so EmitTreeChanged is NOT invoked on this node
+        /// during PropagateAsTreeChange — propagation still walks up via _parent.
+        /// </summary>
+        internal void BeginDeepTracking()
+        {
+            if (_isListeningToTree) return;
+
+            if (!_isListeningToNode)
+                ListenToNodeChanges();
+
+            _isListeningToTree = true;
+            SubscribeToChildren();
+        }
+
+        /// <summary>
+        /// Stops deep tracking started by BeginDeepTracking(), if no external tree listener
+        /// is keeping it alive.
+        /// </summary>
+        internal void EndDeepTracking()
+        {
+            if (!_isListeningToTree) return;
+            if (HasTreeListeners) return; // real external listener keeps it alive
+
+            _isListeningToTree = false;
+            UnsubscribeFromAllChildren();
+
+            if (!HasNodeListeners)
+                StopListeningToNodeChanges();
+        }
+
+        /// <summary>
         /// Called during Retree.Tick(). Compares current field values to snapshot.
         /// </summary>
         internal void PollForChanges()
@@ -287,10 +321,16 @@ namespace RetreeCore
                         SubscribeToChild(newChild);
                 }
 
-                if (Retree.InTransaction)
-                    Retree.QueueTreeChange(this, this, changes);
-                else
-                    EmitTreeChanged(new TreeChangedArgs(this, this, changes));
+                // Only emit if there are real external listeners on this node.
+                // If _isListeningToTree is set via BeginDeepTracking (no real listener),
+                // HasTreeListeners = false and we skip the allocation entirely.
+                if (HasTreeListeners)
+                {
+                    if (Retree.InTransaction)
+                        Retree.QueueTreeChange(this, this, changes);
+                    else
+                        EmitTreeChanged(new TreeChangedArgs(this, this, changes));
+                }
             }
         }
     }

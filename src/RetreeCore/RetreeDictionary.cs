@@ -161,6 +161,11 @@ namespace RetreeCore
             Action<NodeChangedArgs> listener = args => OnValueNodeChanged(value, args);
             _valueListeners[value] = listener;
             value.OnNodeChanged(listener);
+
+            // Enable deep tracking so child RetreeNode fields inside this value are polled.
+            // BeginDeepTracking sets _isListeningToTree without adding a delegate, so
+            // EmitTreeChanged is NOT invoked on the value — propagation walks up via _parent.
+            value.BeginDeepTracking();
         }
 
         private void UnsubscribeFromValue(TValue value)
@@ -168,6 +173,8 @@ namespace RetreeCore
             if (!_valueListeners.TryGetValue(value, out var listener)) return;
             value.OffNodeChanged(listener);
             _valueListeners.Remove(value);
+
+            value.EndDeepTracking();
         }
 
         /// <summary>

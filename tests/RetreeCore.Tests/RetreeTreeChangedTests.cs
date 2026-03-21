@@ -220,6 +220,50 @@ namespace RetreeCore.Tests
         }
 
         [Test]
+        public void TreeChanged_OnDict_DeepChild_FieldChange_Propagates()
+        {
+            // Regression: dict → item (NodeWithChild) → item.child (SimpleNode) → child.count
+            // Previously, changes to item.child.count were not detected because SubscribeToValue
+            // did not recursively enable tree listening (SubscribeToChildren) on each value.
+            var dict = new RetreeDictionary<string, NodeWithChild>();
+            var item = new NodeWithChild();
+            var child = new SimpleNode { count = 0 };
+            item.child = child;
+            dict.Add("k", item);
+
+            TreeChangedArgs received = null;
+            dict.OnTreeChanged(args => received = args);
+
+            child.count = 99;
+            Retree.Tick();
+
+            Assert.IsNotNull(received, "TreeChanged on dict should fire when a value's child RetreeNode field changes");
+            Assert.AreSame(dict, received.ListenerNode);
+            Assert.AreSame(child, received.SourceNode);
+        }
+
+        [Test]
+        public void TreeChanged_OnList_DeepChild_FieldChange_Propagates()
+        {
+            // Regression: list → item (NodeWithChild) → item.child (SimpleNode) → child.count
+            var list = new RetreeList<NodeWithChild>();
+            var item = new NodeWithChild();
+            var child = new SimpleNode { count = 0 };
+            item.child = child;
+            list.Add(item);
+
+            TreeChangedArgs received = null;
+            list.OnTreeChanged(args => received = args);
+
+            child.count = 42;
+            Retree.Tick();
+
+            Assert.IsNotNull(received, "TreeChanged on list should fire when an item's child RetreeNode field changes");
+            Assert.AreSame(list, received.ListenerNode);
+            Assert.AreSame(child, received.SourceNode);
+        }
+
+        [Test]
         public void UnregisterTreeChanged_StopsPropagation()
         {
             var parent = new NodeWithChild();
