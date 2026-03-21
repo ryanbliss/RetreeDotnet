@@ -7,10 +7,18 @@ using System.Collections.Generic;
 
 namespace RetreeCore
 {
-    public sealed class RetreeDictionary<TKey, TValue> : RetreeBase, IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
+    public class RetreeDictionary<TKey, TValue> : RetreeBase, IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>
         where TValue : RetreeNode
     {
         private readonly Dictionary<TKey, TValue> _inner = new Dictionary<TKey, TValue>();
+
+        public RetreeDictionary() { }
+
+        public RetreeDictionary(IDictionary<TKey, TValue> dictionary)
+        {
+            foreach (var kvp in dictionary)
+                Add(kvp.Key, kvp.Value);
+        }
 
         private readonly Dictionary<TValue, Action<NodeChangedArgs>> _valueListeners =
             new Dictionary<TValue, Action<NodeChangedArgs>>();
