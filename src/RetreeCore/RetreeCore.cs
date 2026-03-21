@@ -92,6 +92,16 @@ namespace RetreeCore
             }
         }
 
+        public static void ClearAllListeners()
+        {
+            // Copy to avoid modification during iteration (ClearAllListeners unregisters nodes)
+            var nodes = new List<RetreeNode>(RetreeRegistry.ActiveNodes);
+            foreach (var node in nodes)
+            {
+                node.ClearAllListeners();
+            }
+        }
+
         public static void ClearListeners(RetreeBase node, bool recursive = false)
         {
             node.ClearAllListeners();

@@ -17,6 +17,7 @@ namespace RetreeCore.Unity
         protected virtual void OnDestroy()
         {
             Retree.Reset();
+            Retree.ClearAllListeners();
         }
     }
 }
