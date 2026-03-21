@@ -23,7 +23,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 0, flag = false };
             var receivedArgs = new List<NodeChangedArgs>();
-            node.RegisterOnNodeChanged(args => receivedArgs.Add(args));
+            node.OnNodeChanged(args => receivedArgs.Add(args));
 
             Retree.RunTransaction(() =>
             {
@@ -41,7 +41,7 @@ namespace RetreeCore.Tests
         {
             var list = new RetreeList<SimpleNode>();
             var receivedArgs = new List<NodeChangedArgs>();
-            list.RegisterOnNodeChanged(args => receivedArgs.Add(args));
+            list.OnNodeChanged(args => receivedArgs.Add(args));
 
             Retree.RunTransaction(() =>
             {
@@ -58,7 +58,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 0 };
             var receivedArgs = new List<NodeChangedArgs>();
-            node.RegisterOnNodeChanged(args => receivedArgs.Add(args));
+            node.OnNodeChanged(args => receivedArgs.Add(args));
 
             Retree.RunTransaction(() =>
             {
@@ -86,7 +86,7 @@ namespace RetreeCore.Tests
             parent.child = child;
 
             var treeArgs = new List<TreeChangedArgs>();
-            parent.RegisterOnTreeChanged(args => treeArgs.Add(args));
+            parent.OnTreeChanged(args => treeArgs.Add(args));
 
             Retree.RunTransaction(() =>
             {
@@ -107,8 +107,8 @@ namespace RetreeCore.Tests
             var node = new SimpleNode { count = 0 };
             int nodeCallCount = 0;
             int treeCallCount = 0;
-            node.RegisterOnNodeChanged(_ => nodeCallCount++);
-            node.RegisterOnTreeChanged(_ => treeCallCount++);
+            node.OnNodeChanged(_ => nodeCallCount++);
+            node.OnTreeChanged(_ => treeCallCount++);
 
             Retree.RunSilent(() =>
             {
@@ -125,7 +125,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 0 };
             int callCount = 0;
-            node.RegisterOnNodeChanged(_ => callCount++);
+            node.OnNodeChanged(_ => callCount++);
 
             Retree.RunSilent(() =>
             {
@@ -145,7 +145,7 @@ namespace RetreeCore.Tests
         {
             var list = new RetreeList<SimpleNode>();
             int callCount = 0;
-            list.RegisterOnNodeChanged(_ => callCount++);
+            list.OnNodeChanged(_ => callCount++);
 
             Retree.RunSilent(() =>
             {

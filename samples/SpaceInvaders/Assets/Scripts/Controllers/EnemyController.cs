@@ -13,7 +13,7 @@ namespace SpaceInvaders
         public void Initialize(Enemy enemy)
         {
             Enemy = enemy;
-            enemy.RegisterOnNodeChanged(OnEnemyNodeChanged);
+            enemy.OnNodeChanged(OnEnemyNodeChanged);
             UpdatePosition();
         }
 
@@ -30,7 +30,7 @@ namespace SpaceInvaders
         private void OnDestroy()
         {
             if (Enemy != null)
-                Enemy.UnregisterOnNodeChanged(OnEnemyNodeChanged);
+                Enemy.OffNodeChanged(OnEnemyNodeChanged);
         }
     }
 }

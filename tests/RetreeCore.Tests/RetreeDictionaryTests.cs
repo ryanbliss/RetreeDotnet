@@ -20,7 +20,7 @@ namespace RetreeCore.Tests
         {
             var dict = new RetreeDictionary<string, SimpleNode>();
             NodeChangedArgs received = null;
-            dict.RegisterOnNodeChanged(args => received = args);
+            dict.OnNodeChanged(args => received = args);
 
             var item = new SimpleNode();
             dict.Add("myKey", item);
@@ -40,7 +40,7 @@ namespace RetreeCore.Tests
             dict.Add("k", item);
 
             NodeChangedArgs received = null;
-            dict.RegisterOnNodeChanged(args => received = args);
+            dict.OnNodeChanged(args => received = args);
 
             dict.Remove("k");
 
@@ -58,7 +58,7 @@ namespace RetreeCore.Tests
             dict.Add("k", old);
 
             NodeChangedArgs received = null;
-            dict.RegisterOnNodeChanged(args => received = args);
+            dict.OnNodeChanged(args => received = args);
 
             var replacement = new SimpleNode { count = 2 };
             dict["k"] = replacement;
@@ -73,7 +73,7 @@ namespace RetreeCore.Tests
         {
             var dict = new RetreeDictionary<string, SimpleNode>();
             NodeChangedArgs received = null;
-            dict.RegisterOnNodeChanged(args => received = args);
+            dict.OnNodeChanged(args => received = args);
 
             var item = new SimpleNode();
             dict["newKey"] = item;
@@ -91,7 +91,7 @@ namespace RetreeCore.Tests
             dict.Add("b", new SimpleNode());
 
             NodeChangedArgs received = null;
-            dict.RegisterOnNodeChanged(args => received = args);
+            dict.OnNodeChanged(args => received = args);
 
             dict.Clear();
 
@@ -152,7 +152,7 @@ namespace RetreeCore.Tests
         {
             var dict = new RetreeDictionary<int, SimpleNode>();
             NodeChangedArgs received = null;
-            dict.RegisterOnNodeChanged(args => received = args);
+            dict.OnNodeChanged(args => received = args);
 
             dict.Add(42, new SimpleNode());
 

@@ -20,7 +20,7 @@ namespace RetreeCore
         internal bool HasTreeListeners => _treeListenerCount > 0;
         internal bool HasAnyListeners => _nodeListenerCount > 0 || _treeListenerCount > 0;
 
-        public void RegisterOnNodeChanged(Action<NodeChangedArgs> listener)
+        public void OnNodeChanged(Action<NodeChangedArgs> listener)
         {
             _onNodeChanged += listener;
             _nodeListenerCount++;
@@ -28,7 +28,7 @@ namespace RetreeCore
                 OnFirstNodeListenerAdded();
         }
 
-        public void UnregisterOnNodeChanged(Action<NodeChangedArgs> listener)
+        public void OffNodeChanged(Action<NodeChangedArgs> listener)
         {
             _onNodeChanged -= listener;
             _nodeListenerCount--;
@@ -36,7 +36,7 @@ namespace RetreeCore
                 OnLastNodeListenerRemoved();
         }
 
-        public void RegisterOnTreeChanged(Action<TreeChangedArgs> listener)
+        public void OnTreeChanged(Action<TreeChangedArgs> listener)
         {
             _onTreeChanged += listener;
             _treeListenerCount++;
@@ -44,7 +44,7 @@ namespace RetreeCore
                 OnFirstTreeListenerAdded();
         }
 
-        public void UnregisterOnTreeChanged(Action<TreeChangedArgs> listener)
+        public void OffTreeChanged(Action<TreeChangedArgs> listener)
         {
             _onTreeChanged -= listener;
             _treeListenerCount--;

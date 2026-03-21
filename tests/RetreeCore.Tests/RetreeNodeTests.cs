@@ -27,7 +27,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 0 };
             NodeChangedArgs received = null;
-            node.RegisterOnNodeChanged(args => received = args);
+            node.OnNodeChanged(args => received = args);
 
             node.count = 5;
             Retree.Tick();
@@ -45,7 +45,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 10 };
             int callCount = 0;
-            node.RegisterOnNodeChanged(_ => callCount++);
+            node.OnNodeChanged(_ => callCount++);
 
             // Tick without changing anything
             Retree.Tick();
@@ -58,7 +58,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 0, label = "hello", flag = false };
             var receivedArgs = new List<NodeChangedArgs>();
-            node.RegisterOnNodeChanged(args => receivedArgs.Add(args));
+            node.OnNodeChanged(args => receivedArgs.Add(args));
 
             node.count = 42;
             node.flag = true;
@@ -80,7 +80,7 @@ namespace RetreeCore.Tests
         {
             var node = new NodeWithIgnored { tracked = 0, ignored = 0 };
             int callCount = 0;
-            node.RegisterOnNodeChanged(_ => callCount++);
+            node.OnNodeChanged(_ => callCount++);
 
             node.ignored = 999;
             Retree.Tick();
@@ -93,7 +93,7 @@ namespace RetreeCore.Tests
         {
             var node = new NodeWithReadonly { mutable = 0 };
             NodeChangedArgs received = null;
-            node.RegisterOnNodeChanged(args => received = args);
+            node.OnNodeChanged(args => received = args);
 
             // readonly field cannot be changed after construction, so just verify
             // that only the mutable field is tracked by changing it
@@ -110,7 +110,7 @@ namespace RetreeCore.Tests
         {
             var node = new NodeWithProperty { field = 0 };
             var receivedArgs = new List<NodeChangedArgs>();
-            node.RegisterOnNodeChanged(args => receivedArgs.Add(args));
+            node.OnNodeChanged(args => receivedArgs.Add(args));
 
             // Change only the property, not the field
             node.Property = 100;
@@ -126,13 +126,13 @@ namespace RetreeCore.Tests
             int callCount = 0;
             void Listener(NodeChangedArgs args) => callCount++;
 
-            node.RegisterOnNodeChanged(Listener);
+            node.OnNodeChanged(Listener);
 
             node.count = 1;
             Retree.Tick();
             Assert.AreEqual(1, callCount, "Should fire before unregister");
 
-            node.UnregisterOnNodeChanged(Listener);
+            node.OffNodeChanged(Listener);
 
             node.count = 2;
             Retree.Tick();
@@ -145,7 +145,7 @@ namespace RetreeCore.Tests
             var original = "hello";
             var node = new SimpleNode { label = original };
             NodeChangedArgs received = null;
-            node.RegisterOnNodeChanged(args => received = args);
+            node.OnNodeChanged(args => received = args);
 
             // Create a new string instance with same content via concatenation
             var newString = "hel" + "lo";
@@ -166,7 +166,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 5, label = "test", flag = true };
             int callCount = 0;
-            node.RegisterOnNodeChanged(_ => callCount++);
+            node.OnNodeChanged(_ => callCount++);
 
             // First tick with no changes since registration should not fire
             Retree.Tick();
@@ -182,7 +182,7 @@ namespace RetreeCore.Tests
             void Listener(NodeChangedArgs args) => callCount++;
 
             // Register and snapshot at count=0
-            node.RegisterOnNodeChanged(Listener);
+            node.OnNodeChanged(Listener);
 
             // Change count and tick - should fire
             node.count = 10;
@@ -190,13 +190,13 @@ namespace RetreeCore.Tests
             Assert.AreEqual(1, callCount, "Should fire after first change");
 
             // Unregister
-            node.UnregisterOnNodeChanged(Listener);
+            node.OffNodeChanged(Listener);
 
             // Change count while unregistered
             node.count = 20;
 
             // Re-register - should take fresh snapshot at count=20
-            node.RegisterOnNodeChanged(Listener);
+            node.OnNodeChanged(Listener);
 
             // Tick without further changes - should NOT fire
             // because the fresh snapshot matches current state

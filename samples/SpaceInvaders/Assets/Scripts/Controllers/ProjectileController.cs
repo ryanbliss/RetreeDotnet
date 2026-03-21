@@ -13,7 +13,7 @@ namespace SpaceInvaders
         public void Initialize(LaserProjectile projectile)
         {
             Projectile = projectile;
-            projectile.RegisterOnNodeChanged(OnProjectileNodeChanged);
+            projectile.OnNodeChanged(OnProjectileNodeChanged);
             UpdatePosition();
         }
 
@@ -54,7 +54,7 @@ namespace SpaceInvaders
         private void OnDestroy()
         {
             if (Projectile != null)
-                Projectile.UnregisterOnNodeChanged(OnProjectileNodeChanged);
+                Projectile.OffNodeChanged(OnProjectileNodeChanged);
         }
     }
 }

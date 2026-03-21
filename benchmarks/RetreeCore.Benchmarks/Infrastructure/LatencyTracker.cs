@@ -24,14 +24,14 @@ namespace RetreeCore.Benchmarks.Infrastructure
         {
             _root = root;
             _listener = OnTreeChanged;
-            root.RegisterOnTreeChanged(_listener);
+            root.OnTreeChanged(_listener);
         }
 
         public void Detach()
         {
             if (_root != null && _listener != null)
             {
-                _root.UnregisterOnTreeChanged(_listener);
+                _root.OffTreeChanged(_listener);
                 _root = null;
                 _listener = null;
             }

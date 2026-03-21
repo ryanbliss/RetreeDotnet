@@ -162,7 +162,7 @@ public class TodoList : RetreeNode
 var list = new TodoList();
 
 // Tree listener — fires when any descendant changes
-list.RegisterOnTreeChanged(args =>
+list.OnTreeChanged(args =>
 {
     Console.WriteLine($"Tree changed! Source: {args.SourceNode.GetType().Name}");
     foreach (var change in args.Changes)
@@ -191,7 +191,7 @@ For changes only on a specific node's own fields (not its descendants):
 
 ```csharp
 var todo = list.todos[0];
-todo.RegisterOnNodeChanged(args =>
+todo.OnNodeChanged(args =>
 {
     Console.WriteLine($"Todo changed:");
     foreach (var change in args.Changes)
@@ -270,8 +270,8 @@ Retree.StopTicks();
 
 ```csharp
 // Unregister specific listeners
-list.UnregisterOnTreeChanged(myHandler);
-todo.UnregisterOnNodeChanged(myHandler);
+list.OffTreeChanged(myHandler);
+todo.OffNodeChanged(myHandler);
 
 // Or clear all listeners on a node (optionally recursive)
 Retree.ClearListeners(list, recursive: true);

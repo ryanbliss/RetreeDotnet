@@ -123,7 +123,7 @@ namespace RetreeCore
             // Subscribe to child's OnNodeChanged (handles direct mutations + field changes)
             Action<NodeChangedArgs> listener = args => OnChildNodeChanged(child, args);
             _childListeners[child] = listener;
-            child.RegisterOnNodeChanged(listener);
+            child.OnNodeChanged(listener);
 
             if (child is RetreeNode childNode)
             {
@@ -143,7 +143,7 @@ namespace RetreeCore
                 // OnFirstTreeListenerAdded which subscribes to each item's OnNodeChanged.
                 Action<TreeChangedArgs> treeListener = args => OnChildCollectionTreeChanged(args);
                 _childTreeListeners[child] = treeListener;
-                child.RegisterOnTreeChanged(treeListener);
+                child.OnTreeChanged(treeListener);
             }
         }
 
@@ -151,7 +151,7 @@ namespace RetreeCore
         {
             if (!_childListeners.TryGetValue(child, out var listener)) return;
 
-            child.UnregisterOnNodeChanged(listener);
+            child.OffNodeChanged(listener);
             _childListeners.Remove(child);
 
             if (child is RetreeNode childNode)
@@ -168,7 +168,7 @@ namespace RetreeCore
             else if (_childTreeListeners.TryGetValue(child, out var treeListener))
             {
                 // Collection child: also unsubscribe from tree changes
-                child.UnregisterOnTreeChanged(treeListener);
+                child.OffTreeChanged(treeListener);
                 _childTreeListeners.Remove(child);
             }
         }

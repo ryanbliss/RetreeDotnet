@@ -299,7 +299,7 @@ All controllers live in `Assets/Scripts/Controllers/`. They bridge Retree nodes 
 - Listens to space key to start/restart game.
 
 **Listener:**
-- `game.RegisterOnTreeChanged(OnGameTreeChanged)` — single listener for all changes: `gameActive` toggle, health changes, enemy/projectile list mutations, score updates.
+- `game.OnTreeChanged(OnGameTreeChanged)` — single listener for all changes: `gameActive` toggle, health changes, enemy/projectile list mutations, score updates.
 
 **UI:** Delegates to `GameUIController` (see §4.5) for start screen, score, and health display.
 
@@ -337,7 +337,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 
 - Created by `GameController` when game starts.
 - Holds a reference to the `Player` node.
-- Registers `player.RegisterOnNodeChanged(OnPlayerNodeChanged)`.
+- Registers `player.OnNodeChanged(OnPlayerNodeChanged)`.
 - `OnPlayerNodeChanged`: updates transform position from `player.xPos` and `player.yPos`.
 - In `Update`: reads `Input.GetKey(KeyCode.LeftArrow)` / `Input.GetKey(KeyCode.RightArrow)` → calls `player.MoveLeft(speed * Time.deltaTime)` / `player.MoveRight(speed * Time.deltaTime)`. Player movement speed = 6f units/sec.
 - In `Update`: reads `Input.GetKeyDown(KeyCode.Space)` → calls `player.Shoot()`.
@@ -348,7 +348,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 
 - Created by `GameController` when an enemy is spawned.
 - Holds a reference to the `Enemy` node.
-- Registers `enemy.RegisterOnNodeChanged(OnEnemyNodeChanged)`.
+- Registers `enemy.OnNodeChanged(OnEnemyNodeChanged)`.
 - `OnEnemyNodeChanged`: updates transform position from `enemy.xPos` and `enemy.yPos`.
 - Visual: red quad (1×1 unit) with a red material.
 - Has `BoxCollider2D` (trigger) + `Rigidbody2D` (kinematic) for collision detection.
@@ -357,7 +357,7 @@ Maps each Enemy, Player, and LaserProjectile node to its visual GameObject. Used
 
 - Created by `GameController` when a projectile is spawned.
 - Holds a reference to the `LaserProjectile` node.
-- Registers `projectile.RegisterOnNodeChanged(OnProjectileNodeChanged)`.
+- Registers `projectile.OnNodeChanged(OnProjectileNodeChanged)`.
 - `OnProjectileNodeChanged`: updates transform position from `projectile.xPos` and `projectile.yPos`.
 - Visual: small white quad (0.2×0.6 unit).
 - Has `BoxCollider2D` (trigger) + `Rigidbody2D` (kinematic) for collision detection.
@@ -549,8 +549,8 @@ Assets/
 | Pattern | Where |
 |---------|-------|
 | Field change detection via `Retree.Tick()` | `RetreeUpdater` base class in `GameController` ticks every frame |
-| `RegisterOnNodeChanged` | Controllers updating transforms when node fields change |
-| `RegisterOnTreeChanged` | `GameController` single listener for all game state (gameActive, health, list mutations, score) |
+| `OnNodeChanged` | Controllers updating transforms when node fields change |
+| `OnTreeChanged` | `GameController` single listener for all game state (gameActive, health, list mutations, score) |
 | `RetreeList<T>` synchronous events | Enemy/projectile add/remove fires immediately |
 | `Retree.Parent()` navigation | `Ship.Shoot()` walks up to `Game`, `LaserProjectile.OnCollision()` removes self |
 | `[RetreeIgnore]` | `damage`, `startHealth`, `xPos`/`yDirection` on projectile, `formationDirection` on Game |

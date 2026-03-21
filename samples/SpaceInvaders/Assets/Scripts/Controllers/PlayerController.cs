@@ -15,7 +15,7 @@ namespace SpaceInvaders
         public void Initialize(Player player)
         {
             Player = player;
-            player.RegisterOnNodeChanged(OnPlayerNodeChanged);
+            player.OnNodeChanged(OnPlayerNodeChanged);
             UpdatePosition();
         }
 
@@ -47,7 +47,7 @@ namespace SpaceInvaders
         private void OnDestroy()
         {
             if (Player != null)
-                Player.UnregisterOnNodeChanged(OnPlayerNodeChanged);
+                Player.OffNodeChanged(OnPlayerNodeChanged);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace RetreeCore.Tests
         {
             var list = new RetreeList<SimpleNode>();
             NodeChangedArgs received = null;
-            list.RegisterOnNodeChanged(args => received = args);
+            list.OnNodeChanged(args => received = args);
 
             var item = new SimpleNode { count = 1 };
             list.Add(item);
@@ -41,7 +41,7 @@ namespace RetreeCore.Tests
             list.Add(item); // no listeners yet
 
             NodeChangedArgs received = null;
-            list.RegisterOnNodeChanged(args => received = args);
+            list.OnNodeChanged(args => received = args);
 
             list.Remove(item);
 
@@ -59,7 +59,7 @@ namespace RetreeCore.Tests
             list.Add(item);
 
             NodeChangedArgs received = null;
-            list.RegisterOnNodeChanged(args => received = args);
+            list.OnNodeChanged(args => received = args);
 
             list.RemoveAt(0);
 
@@ -71,11 +71,11 @@ namespace RetreeCore.Tests
         public void Insert_FiresOnNodeChanged()
         {
             var list = new RetreeList<SimpleNode>();
-            list.RegisterOnNodeChanged(_ => { });
+            list.OnNodeChanged(_ => { });
 
             var item = new SimpleNode();
             NodeChangedArgs received = null;
-            list.RegisterOnNodeChanged(args => received = args);
+            list.OnNodeChanged(args => received = args);
 
             list.Insert(0, item);
 
@@ -91,7 +91,7 @@ namespace RetreeCore.Tests
             list.Add(old);
 
             NodeChangedArgs received = null;
-            list.RegisterOnNodeChanged(args => received = args);
+            list.OnNodeChanged(args => received = args);
 
             var replacement = new SimpleNode { count = 2 };
             list[0] = replacement;
@@ -111,7 +111,7 @@ namespace RetreeCore.Tests
             list.Add(b);
 
             NodeChangedArgs received = null;
-            list.RegisterOnNodeChanged(args => received = args);
+            list.OnNodeChanged(args => received = args);
 
             list.Clear();
 
@@ -167,7 +167,7 @@ namespace RetreeCore.Tests
         {
             var list = new RetreeList<SimpleNode>();
             int callCount = 0;
-            list.RegisterOnNodeChanged(_ => callCount++);
+            list.OnNodeChanged(_ => callCount++);
 
             list.Add(new SimpleNode());
 

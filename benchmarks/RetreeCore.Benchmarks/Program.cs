@@ -45,7 +45,7 @@ namespace RetreeCore.Benchmarks
                     Retree.Reset();
                     var tree = matchingScenario.TreeFactory();
                     // Register tree changed to activate nodes, then count
-                    tree.RegisterOnTreeChanged(_ => { });
+                    tree.OnTreeChanged(_ => { });
                     Retree.Tick();
                     result.NodeCount = BenchmarkRunner.CountNodes(tree);
                     result.OperationCount = matchingScenario.OpFactory(tree).Length;

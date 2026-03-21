@@ -152,13 +152,13 @@ namespace RetreeCore
 
             Action<NodeChangedArgs> listener = args => OnValueNodeChanged(value, args);
             _valueListeners[value] = listener;
-            value.RegisterOnNodeChanged(listener);
+            value.OnNodeChanged(listener);
         }
 
         private void UnsubscribeFromValue(TValue value)
         {
             if (!_valueListeners.TryGetValue(value, out var listener)) return;
-            value.UnregisterOnNodeChanged(listener);
+            value.OffNodeChanged(listener);
             _valueListeners.Remove(value);
         }
 

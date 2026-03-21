@@ -50,7 +50,7 @@ namespace SpaceInvaders
         {
             base.Start();
             game = new Game();
-            game.RegisterOnTreeChanged(OnGameTreeChanged);
+            game.OnTreeChanged(OnGameTreeChanged);
 
             _ui = FindFirstObjectByType<GameUIController>();
             _ui?.ShowStartScreen();
@@ -82,7 +82,7 @@ namespace SpaceInvaders
             base.OnDestroy();
             if (game != null)
             {
-                game.UnregisterOnTreeChanged(OnGameTreeChanged);
+                game.OffTreeChanged(OnGameTreeChanged);
                 Retree.ClearListeners(game, recursive: true);
             }
         }

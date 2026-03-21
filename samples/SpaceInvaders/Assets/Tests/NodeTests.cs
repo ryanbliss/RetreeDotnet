@@ -96,7 +96,7 @@ namespace SpaceInvaders.Tests
         {
             var game = new Game();
             // Activate tree listening so parent tracking works
-            game.RegisterOnTreeChanged(_ => { });
+            game.OnTreeChanged(_ => { });
             Retree.Tick();
 
             var proj = new LaserProjectile(0f, 0f, 1f);
@@ -119,7 +119,7 @@ namespace SpaceInvaders.Tests
         public IEnumerator Ship_Shoot_CreatesProjectile()
         {
             var game = new Game();
-            game.RegisterOnTreeChanged(_ => { });
+            game.OnTreeChanged(_ => { });
             Retree.Tick(); // takes snapshot, sets parent for player
 
             game.player.Shoot();
@@ -135,7 +135,7 @@ namespace SpaceInvaders.Tests
         public IEnumerator Enemy_Shoot_CreatesDownwardProjectile()
         {
             var game = new Game();
-            game.RegisterOnTreeChanged(_ => { });
+            game.OnTreeChanged(_ => { });
             Retree.Tick();
 
             var enemy = game.SpawnEnemy();
@@ -191,7 +191,7 @@ namespace SpaceInvaders.Tests
             var game = new Game();
             bool treeChangedFired = false;
 
-            game.RegisterOnTreeChanged(args =>
+            game.OnTreeChanged(args =>
             {
                 foreach (var change in args.Changes)
                 {

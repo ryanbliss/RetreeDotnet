@@ -54,7 +54,7 @@ namespace RetreeCore.Tests
             parent.child = child;
 
             // Parent tracking for fields happens during snapshot (first listener registration)
-            parent.RegisterOnNodeChanged(_ => { });
+            parent.OnNodeChanged(_ => { });
 
             Assert.AreSame(parent, Retree.Parent(child));
         }
@@ -66,7 +66,7 @@ namespace RetreeCore.Tests
             var oldChild = new SimpleNode();
             parent.child = oldChild;
 
-            parent.RegisterOnNodeChanged(_ => { });
+            parent.OnNodeChanged(_ => { });
             Assert.AreSame(parent, Retree.Parent(oldChild));
 
             var newChild = new SimpleNode();
@@ -84,7 +84,7 @@ namespace RetreeCore.Tests
             var child = new SimpleNode();
             parent.child = child;
 
-            parent.RegisterOnNodeChanged(_ => { });
+            parent.OnNodeChanged(_ => { });
             Assert.AreSame(parent, Retree.Parent(child));
 
             parent.child = null;

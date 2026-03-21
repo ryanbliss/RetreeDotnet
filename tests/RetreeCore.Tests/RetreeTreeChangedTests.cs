@@ -21,7 +21,7 @@ namespace RetreeCore.Tests
         {
             var node = new SimpleNode { count = 0 };
             TreeChangedArgs received = null;
-            node.RegisterOnTreeChanged(args => received = args);
+            node.OnTreeChanged(args => received = args);
 
             node.count = 5;
             Retree.Tick();
@@ -40,7 +40,7 @@ namespace RetreeCore.Tests
             parent.child = child;
 
             TreeChangedArgs received = null;
-            parent.RegisterOnTreeChanged(args => received = args);
+            parent.OnTreeChanged(args => received = args);
 
             child.count = 10;
             Retree.Tick();
@@ -55,7 +55,7 @@ namespace RetreeCore.Tests
         {
             var parent = new NodeWithList();
             TreeChangedArgs received = null;
-            parent.RegisterOnTreeChanged(args => received = args);
+            parent.OnTreeChanged(args => received = args);
 
             parent.Items.Add(new SimpleNode());
 
@@ -70,7 +70,7 @@ namespace RetreeCore.Tests
             parent.Items.Add(item);
 
             var receivedArgs = new List<TreeChangedArgs>();
-            parent.RegisterOnTreeChanged(args => receivedArgs.Add(args));
+            parent.OnTreeChanged(args => receivedArgs.Add(args));
 
             item.count = 42;
             Retree.Tick();
@@ -100,7 +100,7 @@ namespace RetreeCore.Tests
             middle.child = deep;
 
             TreeChangedArgs received = null;
-            root.RegisterOnTreeChanged(args => received = args);
+            root.OnTreeChanged(args => received = args);
 
             deep.depth = 99;
             Retree.Tick();
@@ -114,14 +114,14 @@ namespace RetreeCore.Tests
         public void TreeChanged_NewChildAddedToList_IsTracked()
         {
             var parent = new NodeWithList();
-            parent.RegisterOnTreeChanged(_ => { });
+            parent.OnTreeChanged(_ => { });
 
             var item = new SimpleNode { count = 0 };
             parent.Items.Add(item);
 
             // Now change the item's field
             TreeChangedArgs received = null;
-            parent.RegisterOnTreeChanged(args => received = args);
+            parent.OnTreeChanged(args => received = args);
 
             item.count = 5;
             Retree.Tick();
@@ -136,13 +136,13 @@ namespace RetreeCore.Tests
             var item = new SimpleNode { count = 0 };
             parent.Items.Add(item);
 
-            parent.RegisterOnTreeChanged(_ => { });
+            parent.OnTreeChanged(_ => { });
 
             parent.Items.Remove(item);
 
             // Now change the removed item
             var receivedAfterRemove = new List<TreeChangedArgs>();
-            parent.RegisterOnTreeChanged(args => receivedAfterRemove.Add(args));
+            parent.OnTreeChanged(args => receivedAfterRemove.Add(args));
 
             item.count = 99;
             Retree.Tick();
@@ -168,7 +168,7 @@ namespace RetreeCore.Tests
             var newChild = new SimpleNode { count = 0 };
             parent.child = oldChild;
 
-            parent.RegisterOnTreeChanged(_ => { });
+            parent.OnTreeChanged(_ => { });
 
             // Swap child
             parent.child = newChild;
@@ -176,7 +176,7 @@ namespace RetreeCore.Tests
 
             // Change the new child
             TreeChangedArgs received = null;
-            parent.RegisterOnTreeChanged(args => received = args);
+            parent.OnTreeChanged(args => received = args);
 
             newChild.count = 42;
             Retree.Tick();
@@ -193,7 +193,7 @@ namespace RetreeCore.Tests
             list.Add(item);
 
             TreeChangedArgs received = null;
-            list.RegisterOnTreeChanged(args => received = args);
+            list.OnTreeChanged(args => received = args);
 
             item.count = 10;
             Retree.Tick();
@@ -210,7 +210,7 @@ namespace RetreeCore.Tests
             dict.Add("k", item);
 
             TreeChangedArgs received = null;
-            dict.RegisterOnTreeChanged(args => received = args);
+            dict.OnTreeChanged(args => received = args);
 
             item.count = 10;
             Retree.Tick();
@@ -228,13 +228,13 @@ namespace RetreeCore.Tests
 
             int callCount = 0;
             void Listener(TreeChangedArgs args) => callCount++;
-            parent.RegisterOnTreeChanged(Listener);
+            parent.OnTreeChanged(Listener);
 
             child.count = 1;
             Retree.Tick();
             Assert.AreEqual(1, callCount);
 
-            parent.UnregisterOnTreeChanged(Listener);
+            parent.OffTreeChanged(Listener);
 
             child.count = 2;
             Retree.Tick();

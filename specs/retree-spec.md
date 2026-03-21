@@ -60,10 +60,10 @@ The goal is to port this to C#, which obviously is a very different language. Th
 1. Use as much vanilla C# / .NET APIs as possible. This is a Unity project, but it would be nice to be able to port it elsewhere in the future.
 2. Expose an abstract class called `RetreeNode`.
 3. Class has a private `event` for `OnNodeChanged`, which is triggered whenever a child value changes.
-4. Class has a public `RegisterOnNodeChanged` function, which takes a `listener` function as a param, which gets added to to `OnNodeChanged`. If this is the first listener registered, it should begin listening to changes to all child leafs / node references values via `ListenToNodeChanges` (more on #8).
-5. Class has a public `UnregisterOnNodeChanged` function, which takes a `listener` function as a param and does necessary cleanup and removes it from `OnNodeChanged`.
+4. Class has a public `OnNodeChanged` function, which takes a `listener` function as a param, which gets added to to `OnNodeChanged`. If this is the first listener registered, it should begin listening to changes to all child leafs / node references values via `ListenToNodeChanges` (more on #8).
+5. Class has a public `OffNodeChanged` function, which takes a `listener` function as a param and does necessary cleanup and removes it from `OnNodeChanged`.
 6. Class has a private `event` for `OnTreeChanged`, which is triggered whenever a child value for it and any other value in its child nodes.
-7. Class has a public `RegisterOnTreeChanged` function, which takes a `listener` function as a param it sets to `OnTreeChanged`. The class should then begin listening to changes to it and all child nodes. Also has a `UnregisterOnTreeChanged` (similar to #5, but for removing the tree listener).
+7. Class has a public `OnTreeChanged` function, which takes a `listener` function as a param it sets to `OnTreeChanged`. The class should then begin listening to changes to it and all child nodes. Also has a `OffTreeChanged` (similar to #5, but for removing the tree listener).
 8. A protected `ListenToNodeChanges` function should use reflection to listen to all child leafs. The changed values (and their keys) should be passed as a param to listeners (which will be used to track changes for when a node becomes detached from a tree). Whenever a leaf changes, invoke `OnNodeChanged`.
 9. A private `ListenToTreeChanges` function should activate the listener for node changes, and recursively add `OnNodeChanged` listeners to all child leafs that extend `RetreeNode`. If any child node triggers `OnNodeChanged`, invoke `OnTreeChanged`. If a child node is deleted as a reference at any level below it the tree (as signaled by the params of the listener), unregister the `OnNodeChanged` listener. If a new node was added (as denoted by the params of the event), register a new listener for that node.
 10. A private `OnChildNodeChanged` function, which is used as the listener for child node `OnNodeChanged` events (per #9).
@@ -107,7 +107,7 @@ public class SomeExample
 
     public void Start()
     {
-        Todos.RegisterOnTreeChanged(OnTodosChanged);
+        Todos.OnTreeChanged(OnTodosChanged);
         Todo todo = new("some id");
         Todos.Add(todo);
         todo.RegisterOnTreeChanges(OnTodoChanged);
@@ -115,8 +115,8 @@ public class SomeExample
 
     public void Dispose()
     {
-        Todos.UnregisterOnTreeChanged(OnTodosChanged);
-        Todos.Todos[0].UnregisterOnNodeChanged(OnTodoChanged);
+        Todos.OffTreeChanged(OnTodosChanged);
+        Todos.Todos[0].OffNodeChanged(OnTodoChanged);
     }
 
     protected void OnTodosChanged(TreeChanges changes)
@@ -184,15 +184,15 @@ public abstract class RetreeBase
     private event Action<NodeChangedArgs> _onNodeChanged;
     private int _nodeListenerCount;
 
-    public void RegisterOnNodeChanged(Action<NodeChangedArgs> listener);
-    public void UnregisterOnNodeChanged(Action<NodeChangedArgs> listener);
+    public void OnNodeChanged(Action<NodeChangedArgs> listener);
+    public void OffNodeChanged(Action<NodeChangedArgs> listener);
 
     // --- Tree change listeners ---
     private event Action<TreeChangedArgs> _onTreeChanged;
     private int _treeListenerCount;
 
-    public void RegisterOnTreeChanged(Action<TreeChangedArgs> listener);
-    public void UnregisterOnTreeChanged(Action<TreeChangedArgs> listener);
+    public void OnTreeChanged(Action<TreeChangedArgs> listener);
+    public void OffTreeChanged(Action<TreeChangedArgs> listener);
 
     // --- Internal ---
     internal void EmitNodeChanged(NodeChangedArgs args);
@@ -515,7 +515,7 @@ Fields marked with this attribute are excluded from observation.
 #### 4.1 Node change detection (polling)
 
 ```
-RegisterOnNodeChanged() called on a RetreeNode
+OnNodeChanged() called on a RetreeNode
   → _nodeListenerCount increments from 0 to 1
   → ListenToNodeChanges() called
     → Discover fields via reflection (cached per type)
@@ -539,7 +539,7 @@ Retree.Tick() called
 #### 4.2 Tree change detection (recursive)
 
 ```
-RegisterOnTreeChanged() called on a RetreeNode
+OnTreeChanged() called on a RetreeNode
   → _treeListenerCount increments from 0 to 1
   → OnFirstTreeListenerAdded() → ListenToTreeChanges()
     → Ensure ListenToNodeChanges() is active
@@ -744,7 +744,7 @@ public class TodoList : RetreeNode
 var todoList = new TodoList();
 
 // Tree listener: fires when ANY descendant changes
-todoList.RegisterOnTreeChanged(args =>
+todoList.OnTreeChanged(args =>
 {
     Console.WriteLine($"Tree changed! Source: {args.SourceNode}, Changes: {args.Changes.Count}");
 });
@@ -756,7 +756,7 @@ todoList.Todos[0].Toggle();
 Retree.Tick();  // fires treeChanged (isChecked changed on child)
 
 // Node listener on specific todo
-todoList.Todos[0].RegisterOnNodeChanged(args =>
+todoList.Todos[0].OnNodeChanged(args =>
 {
     foreach (var change in args.Changes)
     {
@@ -830,7 +830,7 @@ Statistics computed for all timing metrics: **min, mean, median, P95, P99, max**
 
 1. `Retree.Reset()` — clean global state
 2. Build tree via factory function
-3. `RegisterOnTreeChanged` on root with `LatencyTracker` — records all changes
+3. `OnTreeChanged` on root with `LatencyTracker` — records all changes
 4. Initial `Retree.Tick()` to set up snapshots, then clear tracker
 5. Execute all mutation operations (ops array)
 6. `tracker.OnTickStart()` — mark tick boundary
@@ -917,8 +917,8 @@ DotnetTests/Benchmarks/
 
 1. **Field observation:** `RetreeNode` subclasses automatically detect changes to instance fields (non-readonly, non-static, non-property) after `Retree.Tick()` is called.
 2. **Field filtering:** Properties, readonly fields, static fields, const fields, and `[RetreeIgnore]` fields are excluded from observation.
-3. **Node changed event:** `RegisterOnNodeChanged` fires with `NodeChangedArgs` containing all `FieldChange` entries (field name, old value, new value) when any observed field on that node changes.
-4. **Tree changed event:** `RegisterOnTreeChanged` fires with `TreeChangedArgs` when any descendant node's fields change. Includes both the listener node and the source node that changed.
+3. **Node changed event:** `OnNodeChanged` fires with `NodeChangedArgs` containing all `FieldChange` entries (field name, old value, new value) when any observed field on that node changes.
+4. **Tree changed event:** `OnTreeChanged` fires with `TreeChangedArgs` when any descendant node's fields change. Includes both the listener node and the source node that changed.
 5. **Lazy activation:** No polling occurs for nodes without active listeners. Adding the first listener activates polling; removing the last deactivates it.
 6. **RetreeList mutations:** `Add`, `Remove`, `Insert`, `RemoveAt`, `Clear`, and index setter fire `OnNodeChanged` synchronously (no Tick required).
 7. **RetreeList tree propagation:** Changes to items in a `RetreeList<T>` propagate as `OnTreeChanged` to any ancestor with tree listeners.
@@ -980,7 +980,7 @@ Issues, improvements, and next steps discovered during implementation.
 
 #### 🐛 Bugs / correctness gaps
 
-1. **Deep tree propagation through collections is incomplete.** When a `RetreeList<T>` or `RetreeDictionary<TKey, TValue>` subscribes to items (via `OnFirstTreeListenerAdded`), it only calls `item.RegisterOnNodeChanged(listener)` — which starts polling the item's own fields but does NOT set up recursive tree listening on the item's children. This means if you have `Root → RetreeList<MiddleNode> → MiddleNode → DeepChild`, and `DeepChild.someField` changes, that change will NOT propagate up through the list to Root. It works for `Root → MiddleNode (field) → DeepChild` because `SubscribeToChild` recursively sets `_isListeningToTree = true` on direct RetreeNode children. **The fix:** In `RetreeList.SubscribeToItem` (and `RetreeDictionary.SubscribeToValue`), after registering on the item's `OnNodeChanged`, also recursively set up tree listening on the item — similar to what `RetreeNode.SubscribeToChild` does for RetreeNode children (set `_isListeningToTree`, call `ListenToNodeChanges`, `SubscribeToChildren`). A test should be added: `Root → RetreeList<MiddleNode> → MiddleNode → DeepChild.depth changes → Root sees TreeChanged`.
+1. **Deep tree propagation through collections is incomplete.** When a `RetreeList<T>` or `RetreeDictionary<TKey, TValue>` subscribes to items (via `OnFirstTreeListenerAdded`), it only calls `item.OnNodeChanged(listener)` — which starts polling the item's own fields but does NOT set up recursive tree listening on the item's children. This means if you have `Root → RetreeList<MiddleNode> → MiddleNode → DeepChild`, and `DeepChild.someField` changes, that change will NOT propagate up through the list to Root. It works for `Root → MiddleNode (field) → DeepChild` because `SubscribeToChild` recursively sets `_isListeningToTree = true` on direct RetreeNode children. **The fix:** In `RetreeList.SubscribeToItem` (and `RetreeDictionary.SubscribeToValue`), after registering on the item's `OnNodeChanged`, also recursively set up tree listening on the item — similar to what `RetreeNode.SubscribeToChild` does for RetreeNode children (set `_isListeningToTree`, call `ListenToNodeChanges`, `SubscribeToChildren`). A test should be added: `Root → RetreeList<MiddleNode> → MiddleNode → DeepChild.depth changes → Root sees TreeChanged`.
 
 2. **`ClearListeners` with `RetreeDictionary` not fully covered.** `ClearListeners(node, recursive: true)` handles `RetreeNode` fields and `IEnumerable<RetreeNode>` (which covers `RetreeList<T>` since it implements `IEnumerable<T>`), but `RetreeDictionary<TKey, TValue>` implements `IEnumerable<KeyValuePair<TKey, TValue>>`, not `IEnumerable<RetreeNode>`. The recursive case may skip dictionary values. **The fix:** Add a check for `IDictionary` or iterate `.Values` on the dictionary in `ClearListeners`.
 
