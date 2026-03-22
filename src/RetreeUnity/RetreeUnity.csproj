@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <RootNamespace>RetreeCore.Unity</RootNamespace>
+    <!-- Override UnityManagedDir via env var or a local Directory.Build.props if your Unity install differs -->
+    <UnityManagedDir Condition="'$(UnityManagedDir)' == ''">/Applications/Unity/Hub/Editor/6000.0.40f1/Unity.app/Contents/Managed/UnityEngine</UnityManagedDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Exclude Editor-only files; they live in RetreeUnityEditor.csproj -->
+    <Compile Remove="Editor\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RetreeCore\RetreeCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(UnityManagedDir)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
